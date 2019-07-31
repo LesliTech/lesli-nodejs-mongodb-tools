@@ -1,0 +1,13 @@
+{
+    "name": "lesli-mongodb-wrapper",
+    "version": "0.1.0-alpha",
+    "description": "Mongodb Wrapper",
+    "homepage": "https://lesli.dev",
+    "license": "Proprietary",
+    "author": "LesliTech <hello@lesli.tech>",
+    "main": "index.js",
+    "private": true,
+    "bugs": {
+        "url": "https://github.com/LesliTech/Lesli-Mongodb-Wrapper/issues"
+    }
+}
