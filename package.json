@@ -9,5 +9,8 @@
     "private": true,
     "bugs": {
         "url": "https://github.com/LesliTech/Lesli-Mongodb-Wrapper/issues"
+    },
+    "dependencies": {
+        "mongodb": "3.3.0-beta2",
     }
 }
