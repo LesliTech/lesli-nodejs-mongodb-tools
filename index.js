@@ -25,4 +25,4 @@ Building a better future, one line of code at a time.
 //  · 
 */
 
-module.exports = require("src/lesli-mongodb-wrapper")
+module.exports = require("./src/lesli-mongodb-wrapper")
