@@ -28,7 +28,6 @@ Building a better future, one line of code at a time.
 
 //  · Import frameworks, libraries and tools
 // ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-const debug = require("./debug")
 const MongoDB = require("mongodb")
 const MongoClient = MongoDB.MongoClient
 const ObjectId = MongoDB.ObjectID
@@ -199,7 +198,6 @@ class databaseService {
 
         db.schema = this.database + '-' + db.schema;
         if (!this.config.enabled) {
-            debug_1.default.info('Database is disable', 'service/database#insertDocument');
             return new Promise((resolve, reject) => {
                 return reject({ message: 'Database is disable' });
             });
