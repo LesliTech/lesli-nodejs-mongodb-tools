@@ -205,6 +205,39 @@ class databaseService {
 
 
     // · 
+    insertDocument(database, data) {
+
+        database.schema = [this.namespace, database.schema].join('-')
+
+        // check if database persistanse is enabled
+        if (!this.config.enabled) {
+
+            return new Promise((resolve, reject) => {
+                return reject({ message: 'Database is disable' })
+            })
+
+        }
+
+        return this.connection.then(e => {
+
+            let schema = this.client.db(db.schema)
+            let collection = schema.collection(db.collection)
+
+            data.datetime = new Date()
+            data.timestamp = Math.floor(Date.now() / 1000)
+
+            return collection.insertOne(data)
+
+        }).catch(error => {
+
+            console.log(error)
+
+        })
+
+    }
+
+
+    // · 
     aggregate(database, pipeline) {
 
         database.schema = [this.namespace, database.schema].join('-')
@@ -291,24 +324,7 @@ class databaseService {
 
 
 
-    // · 
-    insertDocument(db, data) {
-
-        db.schema = this.database + '-' + db.schema
-        if (!this.config.enabled) {
-            return new Promise((resolve, reject) => {
-                return reject({ message: 'Database is disable' })
-            })
-        }
-        return this.connection.then(e => {
-            let schema = this.client.db(db.schema)
-            let collection = schema.collection(db.collection)
-            data.datetime = new Date()
-            return collection.insertOne(data)
-        }).catch(error => {
-            console.log(error)
-        })
-    }
+    
     // · 
     getSchemaStats(db) {
         db.schema = this.database + '-' + db.schema
