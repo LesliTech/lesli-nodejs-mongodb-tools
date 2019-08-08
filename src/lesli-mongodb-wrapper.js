@@ -150,7 +150,7 @@ class databaseService {
         database.schema = [this.namespace, database.schema].join('-')
 
         // parse specific document id
-        if (options.query._id) {
+        if (options.query && options.query._id) {
             options.query._id = ObjectId(options.query._id)
         }
 
