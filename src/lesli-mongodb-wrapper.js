@@ -220,11 +220,13 @@ class databaseService {
 
         return this.connection.then(e => {
 
-            let schema = this.client.db(db.schema)
-            let collection = schema.collection(db.collection)
+            let schema = this.client.db(database.schema)
+            let collection = schema.collection(database.collection)
 
-            data.datetime = new Date()
-            data.timestamp = Math.floor(Date.now() / 1000)
+            data._meta = {
+                datetime: new Date(),
+                timestamp: Math.floor(Date.now() / 1000)
+            }
 
             return collection.insertOne(data)
 
@@ -269,7 +271,7 @@ class databaseService {
                 // rows range found
                 "rows": [
                     { "$match": {} },
-                    { "$sort": { "datetime": -1 } },
+                    { "$sort": { "_meta.datetime": -1 } },
                     { "$skip": query.skip ? parseInt(query.skip) : 0 },
                     { "$limit": query.limit ? parseInt(query.limit) : 100 },
                 ],
@@ -298,7 +300,7 @@ class databaseService {
 
         // Get N last records
         if (query.last && query.last != "") {
-            pipeline[0]["$facet"].rows[1]["$sort"].datetime = -1
+            pipeline[0]["$facet"].rows[1]["$sort"]["_meta.datetime"] = -1
             pipeline[0]["$facet"].rows[3]["$limit"] = parseInt(query.last)
         }
 
