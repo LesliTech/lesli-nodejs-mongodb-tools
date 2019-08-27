@@ -42,7 +42,7 @@ class databaseService {
     constructor(config) {
         this.config = config
         this.database = this.config.namespace
-        this.client = new MongoClient("mongodb://localhost:" + this.config.port, { family: 4, useNewUrlParser: true })
+        this.client = new MongoClient("mongodb://"+this.config.host+":"+this.config.port, { family: 4, useNewUrlParser: true })
         this.connection = this.client.connect()
         this.namespace = this.config.namespace
     }
