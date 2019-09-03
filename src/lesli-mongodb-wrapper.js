@@ -42,15 +42,45 @@ class databaseService {
     constructor(config) {
         this.config = config
         this.database = this.config.namespace
-        this.client = new MongoClient("mongodb://"+this.config.host+":"+this.config.port, { family: 4, useNewUrlParser: true })
+        this.client = new MongoClient("mongodb://"+this.config.host+":"+this.config.port, { family: 4, useNewUrlParser: true, useUnifiedTopology: true })
         this.connection = this.client.connect()
         this.namespace = this.config.namespace
     }
 
 
-    // · 
-    getSchema(database) {
+    // · Return an independent copy of any object
+    copy(obj) {
+        return Object.assign({ }, obj)
+    }
 
+
+    // · Create a new collection (also create a schema if needed)
+    createSchemaCollection(config) {
+
+        //let database = JSON.parse(JSON.stringify(config))
+        let database = this.copy(config)
+
+        database.schema = [this.namespace, database.schema].join('-')
+
+        return this.connection.then(e => {
+
+            let schema = this.client.db(database.schema)
+            return schema.createCollection(database.collection)
+
+        }).catch(error => {
+
+            console.log(error)
+
+        })
+
+    }
+
+
+    // · Return info of an individual schema
+    getSchema(config) {
+
+        let database = this.copy(config)
+        
         database.schema = [this.namespace, database.schema].join('-')
 
         return this.connection.then(e => {
@@ -74,8 +104,10 @@ class databaseService {
     }
 
 
-    // · 
-    getSchemaCollection(database) {
+    // · return info of an individual schema collection
+    getSchemaCollection(config) {
+
+        let database = this.copy(config)
 
         database.schema = [this.namespace, database.schema].join('-')
 
@@ -83,7 +115,26 @@ class databaseService {
 
             let schema = this.client.db(database.schema)
             let collection = schema.collection(database.collection)
-            return collection.stats()
+            let stats = collection.stats()
+
+            return stats.then(s => {
+
+                return new Promise(resolve => {
+
+                    return resolve({
+                        ok: s.ok,
+                        ns: s.ns,
+                        size: s.size,
+                        storageSize: s.storageSize,
+                        totalIndexSize: s.totalIndexSize
+                    })
+
+                })
+
+            }).catch(error => {
+
+            })
+
 
         }).catch(error => {
 
@@ -95,14 +146,32 @@ class databaseService {
 
 
     // · 
-    createSchemaCollection(database) {
+    insertDocument(config, data) {
+
+        let database = this.copy(config)
 
         database.schema = [this.namespace, database.schema].join('-')
+
+        // check if database persistanse is enabled
+        if (!this.config.enabled) {
+
+            return new Promise((resolve, reject) => {
+                return reject({ message: 'Database is disable' })
+            })
+
+        }
 
         return this.connection.then(e => {
 
             let schema = this.client.db(database.schema)
-            return schema.createCollection(database.collection)
+            let collection = schema.collection(database.collection)
+
+            data._meta = {
+                datetime: new Date(),
+                timestamp: Math.floor(Date.now() / 1000)
+            }
+
+            return collection.insertOne(data)
 
         }).catch(error => {
 
@@ -111,6 +180,19 @@ class databaseService {
         })
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // · 
@@ -204,39 +286,7 @@ class databaseService {
     }
 
 
-    // · 
-    insertDocument(database, data) {
 
-        database.schema = [this.namespace, database.schema].join('-')
-
-        // check if database persistanse is enabled
-        if (!this.config.enabled) {
-
-            return new Promise((resolve, reject) => {
-                return reject({ message: 'Database is disable' })
-            })
-
-        }
-
-        return this.connection.then(e => {
-
-            let schema = this.client.db(database.schema)
-            let collection = schema.collection(database.collection)
-
-            data._meta = {
-                datetime: new Date(),
-                timestamp: Math.floor(Date.now() / 1000)
-            }
-
-            return collection.insertOne(data)
-
-        }).catch(error => {
-
-            console.log(error)
-
-        })
-
-    }
 
 
     // · 
