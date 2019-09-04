@@ -298,7 +298,10 @@ class databaseService {
 
             let schema = this.client.db(database.schema)
             let collection = schema.collection(database.collection)
-            return collection.aggregate(pipeline).toArray()
+            let aggregation = collection.aggregate(pipeline)
+            let result = aggregation.toArray()
+
+            return result
 
         }).catch(error => {
 
