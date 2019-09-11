@@ -292,8 +292,6 @@ class databaseService {
     // · 
     aggregate(database, pipeline) {
 
-        database.schema = [this.namespace, database.schema].join('-')
-
         return this.connection.then(e => {
 
             let schema = this.client.db(database.schema)
