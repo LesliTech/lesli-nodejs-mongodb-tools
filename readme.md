@@ -1,49 +1,28 @@
 <p align="center">
-	<a href="https://github.com/ldonis/ProjectRaven" target="_blank">
-		<img alt="ProjectRaven logo" width="200px" src="https://cdn.lesli.tech/projectraven/brand/projectraven-imagotipo-nomargin.svg" />
+	<a href="https://lesli.cloud" target="_blank">
+		<img alt="LesliTech logo" width="200" src="https://cdn.lesli.tech/leslitech/brand/leslitech-logo.svg" />
 	</a>
 </p>
 
-<h3 align="center"></h3>
+<h3 align="center">MongoDB wrapper for NodeJS</h3>
 
 <hr/>
 
-Version 0.1.0-alpha  
+Version 0.1.0-alpha
 
+#### Website & documentation
+-------
 
-### Development installation from source  
-------
-**Clone the repo:** `git clone https://github.com/ldonis/ProjectRaven.git`.  
-**Run unit tests:** `npm run test`.  
+LesliDev is proprietary software
 
-***Click [here](installation.md) for advanced installation instructions.***
+* Website: [https://lesli.tech](https://lesli.tech)
 
-
-### Features  
-------
-
-
-### Requirements  
-------
-* NodeJS 8+  
-* MongoDB 4+
-* NPM  
-
-
-### Website & documentation  
-------
-Project Raven is completely free and open source
-
-* Website: [https://raven.dev.gt](https://raven.dev.gt)
-
-* Documentation: [https://docs.lesli.dev/raven/](https://docs.lesli.dev/raven/)
-
-* Issue tracker: [https://github.com/ldonis/ProjectRaven/issues](https://github.com/ldonis/ProjectRaven/issues)
+* Issue tracker: [https://github.com/LesliTech/lesli-nodejs-mongodb-wrapper/issues](https://github.com/LesliTech/lesli-nodejs-mongodb-wrapper/issues)
 
 
 #### License
 -------
-Copyright (c) 2019, Lesli Technologies, S. A.
+Copyright (c) 2020, Lesli Technologies, S. A.
 
 All the information provided by this website is protected by laws of Guatemala related 
 to industrial property, intellectual property, copyright and relative international laws. 
@@ -52,3 +31,9 @@ rights of the code, texts, trade mark, design, pictures and any other informatio
 Without the written permission of Lesli Technologies, S. A., any replication, modification,
 transmission, publication is strictly forbidden.
 For more information read the license file including with this software.
+
+<p align="center">
+	<a href="https://www.lesli.tech" target="_blank">
+		<img alt="LesliTech logo" width="150" src="https://cdn.lesli.tech/leslitech/brand/leslitech-logo.svg" />
+	</a>
+</p>

@@ -1,20 +1,15 @@
 {
-    "name": "lesli-mongodb-wrapper",
-    "version": "0.1.0-alpha",
-    "description": "Mongodb Wrapper",
-    "homepage": "https://lesli.dev",
-    "license": "Proprietary",
+    "name": "lesli-nodejs-mongodb-wrapper",
+    "title": "LesliCloud",
+    "homepage": "https://lesli.cloud",
     "author": "LesliTech <hello@lesli.tech>",
-    "main": "index.js",
+    "license": "All rights reserved",
     "private": true,
-    "bugs": {
-        "url": "https://github.com/LesliTech/Lesli-Mongodb-Wrapper/issues"
-    },
     "dependencies": {
-        "mongodb": "3.3.2"
+        "mongodb": "3.5.2"
     },
     "devDependencies": {
-        "mocha": "6.2.0"
+        "mocha": "7.0.1"
     },
     "scripts": {
         "test": "mocha"
