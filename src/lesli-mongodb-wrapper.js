@@ -321,7 +321,7 @@ class databaseService {
                     { "$match": {} },
                     { "$sort": { "_meta.datetime": -1 } },
                     { "$skip": query.skip ? parseInt(query.skip) : 0 },
-                    { "$limit": query.limit ? parseInt(query.limit) : 100 },
+                    { "$limit": query.limit ? parseInt(query.limit) : 1000 },
                 ],
 
                 // total rows found
