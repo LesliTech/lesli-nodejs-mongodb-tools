@@ -179,19 +179,6 @@ class databaseService {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     // · 
     dropSchemaCollection(database) {
 
@@ -213,11 +200,12 @@ class databaseService {
 
 
     // · 
-    getSchemaCollectionDocuments(database) {
+    getSchemaCollectionDocuments(database, query={}) {
 
         database.schema = [this.namespace, database.schema].join('-')
 
-        let pipeline = this.aggregationPipelineSelection({})
+        let pipeline = this.aggregationPipelineSelection(query)
+
         return this.aggregate(database, pipeline)
 
     }
@@ -281,8 +269,6 @@ class databaseService {
         })
 
     }
-
-
 
 
 
