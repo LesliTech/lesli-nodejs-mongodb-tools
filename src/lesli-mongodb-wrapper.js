@@ -260,6 +260,8 @@ class databaseService {
             let schema = this.client.db(database.schema)
             let collection = schema.collection(database.collection)
 
+            delete data._id
+
             return collection.updateOne(options.query, { $set: data })
 
         }).catch(error => {
