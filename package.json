@@ -1,15 +1,16 @@
 {
     "name": "lesli-nodejs-mongodb-wrapper",
-    "title": "LesliCloud",
-    "homepage": "https://lesli.cloud",
+    "description": "MongoDB query helpers",
+    "homepage": "https://lesli.dev",
     "author": "LesliTech <hello@lesli.tech>",
-    "license": "All rights reserved",
-    "private": true,
+    "license": "GPLv3",
+    "version": "0.1.0",
+    "main": "index.js",
     "dependencies": {
-        "mongodb": "3.5.2"
+        "mongodb": "3.5.5"
     },
     "devDependencies": {
-        "mocha": "7.0.1"
+        "mocha": "7.1.1"
     },
     "scripts": {
         "test": "mocha"

@@ -1,36 +1,27 @@
 <p align="center">
-	<a href="https://lesli.cloud" target="_blank">
-		<img alt="LesliTech logo" width="200" src="https://cdn.lesli.tech/leslitech/brand/leslitech-logo.svg" />
+	<a href="https://www.lesli.tech" target="_blank">
+		<img width="175" alt="LesliTech logo" src="https://cdn.lesli.tech/leslitech/brand/leslitech-logo.svg" />
 	</a>
 </p>
 
-<h3 align="center">MongoDB wrapper for NodeJS</h3>
+<h3 align="center">Lesli NodeJS MongoDB wrapper</h3>
+<p align="center">MongoDB query helpers</p>
 
 <hr/>
 
-Version 0.1.0-alpha
-
-#### Website & documentation
--------
-
-LesliDev is proprietary software
-
-* Website: [https://lesli.tech](https://lesli.tech)
-
-* Issue tracker: [https://github.com/LesliTech/lesli-nodejs-mongodb-wrapper/issues](https://github.com/LesliTech/lesli-nodejs-mongodb-wrapper/issues)
+Version 0.1.0  
 
 
-#### License
--------
-Copyright (c) 2020, Lesli Technologies, S. A.
+#### Installation
+--------
+```
+npm install lesli-nodejs-mongodb-wrapper --save  
+```
 
-All the information provided by this website is protected by laws of Guatemala related 
-to industrial property, intellectual property, copyright and relative international laws. 
-Lesli Technologies, S. A. is the exclusive owner of all intellectual or industrial property
-rights of the code, texts, trade mark, design, pictures and any other information.
-Without the written permission of Lesli Technologies, S. A., any replication, modification,
-transmission, publication is strictly forbidden.
-For more information read the license file including with this software.
+
+### License  
+------
+Software developed in [Guatemala](http://visitguatemala.com/) distributed under the *General Public License v 3.0* you can read the full license [here](http://www.gnu.org/licenses/gpl-3.0.html)
 
 <p align="center">
 	<a href="https://www.lesli.tech" target="_blank">

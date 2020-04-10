@@ -3,20 +3,25 @@ Lesli
 
 Copyright (c) 2020, Lesli Technologies, S. A.
 
-All the information provided by this website is protected by laws of Guatemala related 
-to industrial property, intellectual property, copyright and relative international laws. 
-Lesli Technologies, S. A. is the exclusive owner of all intellectual or industrial property
-rights of the code, texts, trade mark, design, pictures and any other information.
-Without the written permission of Lesli Technologies, S. A., any replication, modification,
-transmission, publication is strictly forbidden.
-For more information read the license file including with this software.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-LesliDev - Software for LesliTech 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+Lesli NodeJS MongoDB Wrapper - MongoDB query helpers
 
 Powered by https://www.lesli.tech
 Building a better future, one line of code at a time.
 
-@license  Propietary - all rights reserved.
+@license  GPLv3 http://www.gnu.org/licenses/gpl-3.0.en.html
 @version  0.1.0-alpha
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
@@ -142,6 +147,36 @@ class databaseService {
     }
 
 
+    // · Find documents
+    findDocument(database, options = {}) {
+
+        database.schema = [this.namespace, database.schema].join('-')
+
+        // parse specific document id
+        if (options.query && options.query._id) {
+            options.query._id = ObjectId(options.query._id)
+        }
+
+        return this.connection.then(e => {
+
+            let schema = this.client.db(database.schema)
+            let collection = schema.collection(database.collection)
+
+            return collection
+                .find(options.query)
+                .project(options.fields)
+                .sort(options.sort)
+                .toArray()
+
+        }).catch(error => {
+
+            console.log(error)
+            
+        })
+
+    }
+
+
     // · 
     insertDocument(config, data) {
 
@@ -210,35 +245,6 @@ class databaseService {
 
     }
 
-
-    // · Find documents
-    findDocument(database, options = {}) {
-
-        database.schema = [this.namespace, database.schema].join('-')
-
-        // parse specific document id
-        if (options.query && options.query._id) {
-            options.query._id = ObjectId(options.query._id)
-        }
-
-        return this.connection.then(e => {
-
-            let schema = this.client.db(database.schema)
-            let collection = schema.collection(database.collection)
-
-            return collection
-                .find(options.query)
-                .project(options.fields)
-                .sort(options.sort)
-                .toArray()
-
-        }).catch(error => {
-
-            console.log(error)
-            
-        })
-
-    }
 
     // · Update specific document
     updateDocument(database, options = {}, data = {}) {
