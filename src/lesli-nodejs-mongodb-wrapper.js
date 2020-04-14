@@ -124,11 +124,9 @@ class databaseService {
                 return new Promise(resolve => {
 
                     return resolve({
-                        ok: s.ok,
-                        ns: s.ns,
                         size: s.size,
-                        storageSize: s.storageSize,
-                        totalIndexSize: s.totalIndexSize
+                        records: s.count,
+                        storage: s.storageSize
                     })
 
                 })
@@ -198,10 +196,7 @@ class databaseService {
             let schema = this.client.db(database.schema)
             let collection = schema.collection(database.collection)
 
-            data._meta = {
-                datetime: new Date(),
-                timestamp: Math.floor(Date.now() / 1000)
-            }
+            data.datetime = new Date()
 
             return collection.insertOne(data)
 
