@@ -16,16 +16,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-Lesli NodeJS MongoDB Wrapper - MongoDB query helpers
+ProjectRaven - Backend platform for apps, websites and IoT devices
 
 Powered by https://www.lesli.tech
 Building a better future, one line of code at a time.
 
+@contact  <hello@lesli.tech>
+@website  <https://lesli.tech>
 @license  GPLv3 http://www.gnu.org/licenses/gpl-3.0.en.html
-@version  0.1.0-alpha
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
+
 */
 
 
@@ -307,14 +309,14 @@ class databaseService {
 
                 // rows range found
                 "rows": [
-                    { "$match": {} },
-                    { "$sort": { "_meta.datetime": -1 } },
+                    { "$match": {}, },
+                    { "$sort": { "datetime": -1 } },
                     { "$skip": query.skip ? parseInt(query.skip) : 0 },
-                    { "$limit": query.limit ? parseInt(query.limit) : 1000 },
+                    { "$limit": query.limit ? parseInt(query.limit) : 1000 }
                 ],
 
                 // total rows found
-                "count": [{ "$count": "count" }]
+                "records": [{ "$count": "total" }]
 
             }
 
@@ -335,9 +337,10 @@ class databaseService {
             }
         }
 
+
         // Get N last records
-        if (query.last && query.last != "") {
-            pipeline[0]["$facet"].rows[1]["$sort"]["_meta.datetime"] = -1
+        if (query.last && query.last != "" && query.last > 0) {
+            pipeline[0]["$facet"].rows[1]["$sort"]["datetime"] = -1
             pipeline[0]["$facet"].rows[3]["$limit"] = parseInt(query.last)
         }
 
