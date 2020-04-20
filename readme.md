@@ -9,7 +9,7 @@
 
 <hr/>
 
-Version 0.1.1  
+Version 0.1.2  
 
 
 #### Installation
@@ -17,6 +17,14 @@ Version 0.1.1
 ```
 npm install lesli-nodejs-mongodb-wrapper --save  
 ```
+
+#### Website & documentation
+-------
+
+This project is completely free and open source
+
+* Website: [https://raven.dev.gt](https://raven.dev.gt)
+* Issue tracker: [https://github.com/LesliTech/RavenServer/issues](https://github.com/LesliTech/RavenServer/issues)
 
 
 ### License  

@@ -1,6 +1,6 @@
 {
     "name": "lesli-nodejs-mongodb-wrapper",
-    "description": "MongoDB query helpers",
+    "description": "MongoDB query helper",
     "homepage": "https://lesli.dev",
     "author": "LesliTech <hello@lesli.tech>",
     "license": "GPLv3",
