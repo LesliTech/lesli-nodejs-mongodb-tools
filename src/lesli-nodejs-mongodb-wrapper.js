@@ -27,7 +27,6 @@ Building a better future, one line of code at a time.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
-
 */
 
 
@@ -39,233 +38,278 @@ const ObjectId = MongoDB.ObjectID
 
 
 // · 
-class databaseService {
+class LesliNodeJSMongoDBWrapper {
 
 
     // · 
     constructor(config) {
-        this.config = config
-        this.database = this.config.namespace
-        this.client = new MongoClient("mongodb://"+this.config.host+":"+this.config.port, { family: 4, useNewUrlParser: true, useUnifiedTopology: true })
+        this.client = new MongoClient("mongodb://"+config.host+":"+config.port, { family: 4, useNewUrlParser: true, useUnifiedTopology: true })
         this.connection = this.client.connect()
-        this.namespace = this.config.namespace
+        this.namespace = config.namespace
     }
 
 
-    // · Return an independent copy of any object
-    copy(obj) {
-        return Object.assign({ }, obj)
+    // · Parse schema information
+    // · Return standard namespace - database -collection structure
+    parse_schema(schema) {
+        schema = Object.assign({ }, schema)
+        schema.database = [this.namespace, schema.database].join('-')
+        return schema
     }
 
+    convert_bytes_to_human_value(size, unit = "bytes") {
 
-    // · Create a new collection (also create a schema if needed)
-    createSchemaCollection(config) {
+        if (!size || size < 0) {
+            size = 0
+        }
 
-        //let database = JSON.parse(JSON.stringify(config))
-        let database = this.copy(config)
+        var decimals = 2
+        var units = {
+            bytes: "bytes",
+            kilobytes: "kilobytes",
+            megabytes: "megabytes",
+            gigabytes: "gigabytes"
+        }
 
-        database.schema = [this.namespace, database.schema].join('-')
+        // converts bytes to kilobytes
+        if (unit == units.bytes && size > 1024) {
+            return this.convert_bytes_to_human_value(size / 1024, units.kilobytes)
+        }
 
-        return this.connection.then(e => {
+        // converts kilobytes to megabytes
+        if (unit == units.kilobytes && size > 1024) {
+            
+            return this.convert_bytes_to_human_value(size / 1024, units.megabytes)
+        }
 
-            let schema = this.client.db(database.schema)
-            return schema.createCollection(database.collection)
+        // converts megabytes to gigabyte
+        if (unit == units.megabytes && size > 1024) {
+            
+            return this.convert_bytes_to_human_value(size / 1024, units.gigabytes)
+        }
 
-        }).catch(error => {
+        // return size with no decimals
+        if (size.toFixed(decimals) % 1 === 0) {
+            return [size, unit].join(" ")
+        }
 
-            console.log(error)
-
-        })
+        // return size with decimals
+        return [size.toFixed(decimals), unit].join(" ")
+        
 
     }
 
+    /*
+    database_read
+
+    database_collection_read
+    database_collection_create
+    database_collection_delete
+
+    database_collection_documents
+    database_collection_document_read
+    database_collection_document_create
+    database_collection_document_update
+    database_collection_document_delete
+    database_collection_document_search
+
+    */
 
     // · Return info of an individual schema
-    getSchema(config) {
+    database_read(schema) {
 
-        let database = this.copy(config)
-        
-        database.schema = [this.namespace, database.schema].join('-')
+        schema = this.parse_schema(schema)
 
-        return this.connection.then(e => {
+        return (async() => {
 
-            let schema = this.client.db(database.schema)
+            let database = this.client.db(schema.database)
 
-            let collection = schema.listCollections()
+            let collections = (await database.listCollections().toArray()).map(collection => {
+                return {
+                    name: collection.name
+                }
+            })
+
+            // get database statistics in bytes
+            let information = await database.stats()
+
+            information = {
+                database_name: information.db,
+                database_collection_count: information.collections,
+                database_collection_document_count: information.objects,
+                database_uncompressed_data_size: {
+                    bytes: information.dataSize,
+                    human: this.convert_bytes_to_human_value(information.dataSize),
+                },
+                database_storage_size: {
+                    bytes: information.storageSize,
+                    human: this.convert_bytes_to_human_value(information.storageSize)
+                },
+                document_average_size: {
+                    bytes: this.convert_bytes_to_human_value(information.avgObjSize),
+                    human: information.avgObjSize
+                },
+                indexes: information.indexes,
+                indexes_size: {
+                    bytes: information.indexSize,
+                    human: this.convert_bytes_to_human_value(information.indexSize)
+                },
+                filesystem_available_space: {
+                    bytes: information.fsTotalSize - information.fsUsedSize,
+                    human: this.convert_bytes_to_human_value(information.fsTotalSize - information.fsUsedSize)
+                }
+            }
 
             return new Promise((resolve, reject) => {
 
-                return resolve(collection.toArray())
-
-            })
-
-        }).catch(error => {
-
-            console.log(error)
-            
-        })
-
-    }
-
-
-    // · return info of an individual schema collection
-    getSchemaCollection(config) {
-
-        let database = this.copy(config)
-
-        database.schema = [this.namespace, database.schema].join('-')
-
-        return this.connection.then(e => {
-
-            let schema = this.client.db(database.schema)
-            let collection = schema.collection(database.collection)
-            let stats = collection.stats()
-
-            return stats.then(s => {
-
-                return new Promise(resolve => {
-
-                    return resolve({
-                        size: s.size,
-                        records: s.count,
-                        storage: s.storageSize
-                    })
-
+                return resolve({
+                    information: information,
+                    collections: collections
                 })
 
-            }).catch(error => {
-
             })
 
-
-        }).catch(error => {
-
-            console.log(error)
-
-        })
+        })()
 
     }
 
 
-    // · Find documents
-    findDocument(database, options = {}) {
+    database_collection_create(schema) {
 
-        database.schema = [this.namespace, database.schema].join('-')
-
-        // parse specific document id
-        if (options.query && options.query._id) {
-            options.query._id = ObjectId(options.query._id)
-        }
+        schema = this.parse_schema(schema)
 
         return this.connection.then(e => {
 
-            let schema = this.client.db(database.schema)
-            let collection = schema.collection(database.collection)
-
-            return collection
-                .find(options.query)
-                .project(options.fields)
-                .sort(options.sort)
-                .toArray()
+            let database = this.client.db(schema.database)
+            return database.createCollection(schema.collection)
 
         }).catch(error => {
 
             console.log(error)
-            
+
         })
 
     }
 
 
-    // · 
-    insertDocument(config, data) {
+    database_collection_read(schema) {
 
-        let database = this.copy(config)
+        schema = this.parse_schema(schema)
 
-        database.schema = [this.namespace, database.schema].join('-')
+        return this.connection.then(e => {
 
-        // check if database persistanse is enabled
-        if (!this.config.enabled) {
+            let database = this.client.db(schema.database)
+
+            let collection = database.collection(schema.collection)
+
+            return collection.stats()
+
+        }).then(collection_stats => {
 
             return new Promise((resolve, reject) => {
-                return reject({ message: 'Database is disable' })
+
+                return resolve({
+                    ok: collection_stats.ok,
+                    database_collection_document_count: collection_stats.count,
+                    database_collection_uncompressed_data_size: {
+                        bytes: collection_stats.size,
+                        human: this.convert_bytes_to_human_value(collection_stats.size)
+                    },
+                    document_average_size: {
+                        bytes: collection_stats.avgObjSize || 0,
+                        human: this.convert_bytes_to_human_value(collection_stats.avgObjSize)
+                    }
+                })
+
             })
 
-        }
-
-        return this.connection.then(e => {
-
-            let schema = this.client.db(database.schema)
-            let collection = schema.collection(database.collection)
-
-            data.datetime = new Date()
-
-            return collection.insertOne(data)
-
         }).catch(error => {
-
             console.log(error)
-
         })
 
     }
 
 
-    // · 
-    dropSchemaCollection(database) {
+    database_collection_delete(schema) {
 
-        database.schema = [this.namespace, database.schema].join('-')
+        schema = this.parse_schema(schema)
 
         return this.connection.then(e => {
 
-            let schema = this.client.db(database.schema)
-            let collection = schema.collection(database.collection)
+            let database = this.client.db(schema.database)
+            let collection = database.collection(schema.collection)
             return collection.drop()
 
         }).catch(error => {
-
             console.log(error)
+        })
+
+    }
+
+    database_collection_documents(schema) {
+
+        return this.aggregate(
+            this.parse_schema(schema),           // schema
+            this.aggregationPipelineQuery({})    // pipeline
+        )
+
+    }
+
+    database_collection_document_create(schema, document) {
+
+        schema = this.parse_schema(schema)
+
+        return this.connection.then(e => {
+
+            let database = this.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+
+            document.datetime = new Date()
+
+            return collection.insertOne(document)
+
+        }).then(document_insert_result => {
+
+            return new Promise((resolve, reject) => {
+
+                return resolve({
+                    n: document_insert_result.result.n,
+                    ok: document_insert_result.result.ok,
+                    id: document_insert_result.insertedId
+                })
+
+            })
 
         })
 
     }
 
 
+
     // · 
-    getSchemaCollectionDocuments(database, query={}) {
-
-        database.schema = [this.namespace, database.schema].join('-')
-
-        let pipeline = this.aggregationPipelineSelection(query)
-
-        return this.aggregate(database, pipeline)
-
-    }
-
-
-    // · Update specific document
-    updateDocument(database, options = {}, data = {}) {
-
-        database.schema = [this.namespace, database.schema].join('-')
-
-        // Advanced search options
-        if (!options.query) {
-            options.query = {}
-        }
-
-        // Find by object id
-        if (options.query._id) {
-            options.query._id = ObjectId(options.query._id)
-        }
+    aggregate(schema, aggregation_pipeline) {
 
         return this.connection.then(e => {
 
-            let schema = this.client.db(database.schema)
-            let collection = schema.collection(database.collection)
+            let database = this.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+            let aggregation = collection.aggregate(aggregation_pipeline)
 
-            delete data._id
+            return aggregation.toArray()
 
-            return collection.updateOne(options.query, { $set: data })
+        }).then(documents => {
+
+            return new Promise((resolve, reject) => {
+
+                return resolve({
+                    records: {
+                        total: documents[0].records[0].total,
+                        found: documents[0].documents.length
+                    },
+                    documents: documents[0].documents
+                })
+
+            })
 
         }).catch(error => {
 
@@ -276,30 +320,8 @@ class databaseService {
     }
 
 
-
     // · 
-    aggregate(database, pipeline) {
-
-        return this.connection.then(e => {
-
-            let schema = this.client.db(database.schema)
-            let collection = schema.collection(database.collection)
-            let aggregation = collection.aggregate(pipeline)
-            let result = aggregation.toArray()
-
-            return result
-
-        }).catch(error => {
-
-            console.log(error)
-
-        })
-
-    }
-
-
-    // · 
-    aggregationPipelineSelection(query) {
+    aggregationPipelineQuery(query) {
 
         var pipeline = [{
 
@@ -308,7 +330,7 @@ class databaseService {
             "$facet": {
 
                 // rows range found
-                "rows": [
+                "documents": [
                     { "$match": {}, },
                     { "$sort": { "datetime": -1 } },
                     { "$skip": query.skip ? parseInt(query.skip) : 0 },
@@ -348,145 +370,8 @@ class databaseService {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    // · 
-    getSchemaStats(db) {
-        db.schema = this.database + '-' + db.schema
-        return (() => __awaiter(this, void 0, void 0, function* () {
-            let client = yield MongoClient.connect("mongodb://localhost:" + this.config.port, { useNewUrlParser: true })
-            let schema = client.db(db.schema)
-            let result = yield schema.stats()
-            if (client) {
-                client.close()
-            }
-            return new Promise((resolve, reject) => {
-                return resolve(result)
-            })
-        }))()
-    }
-    // · 
-    getSchemaCollections(db) {
-        db.schema = this.database + '-' + db.schema
-        return this.connection.then(e => {
-            let schema = this.client.db(db.schema)
-            let collection = schema.listCollections()
-            return new Promise((resolve, reject) => {
-                return resolve(collection.toArray())
-            })
-        }).catch(error => {
-            console.log(error)
-        })
-    }
-    // · 
-    getSchemaCollectionStats(db) {
-        db.schema = this.database + '-' + db.schema
-        return (() => __awaiter(this, void 0, void 0, function* () {
-            let client = yield MongoClient.connect("mongodb://localhost:" + this.config.port, { useNewUrlParser: true })
-            let schema = client.db(db.schema)
-            let collection = schema.collection(db.collection)
-            let result = yield collection.stats()
-            if (client) {
-                client.close()
-            }
-            return new Promise((resolve, reject) => {
-                return resolve(result)
-            })
-        }))()
-    }
-    // · 
-    deleteSchemaCollection(db) {
-        db.schema = this.database + '-' + db.schema
-        return (() => __awaiter(this, void 0, void 0, function* () {
-            let client = yield MongoClient.connect("mongodb://localhost:" + this.config.port, { useNewUrlParser: true })
-            let schema = client.db(db.schema)
-            let collection = schema.collection(db.collection)
-            let result = yield collection.drop()
-            if (client) {
-                client.close()
-            }
-            return new Promise((resolve, reject) => {
-                return resolve(result)
-            })
-        }))()
-    }
-    // · 
-    aggregationPipelineCounting(query) {
-        let fields = ['value']
-        if (query.fields) {
-            fields = query.fields
-        }
-        var pipeline = [{
-                "$facet": {
-                    year: [{
-                            $group: {
-                                _id: { $dateToString: { format: "%Y", date: "$datetime" } },
-                            }
-                        }, {
-                            $sort: {
-                                "_id": 1
-                            }
-                        }],
-                    month: [{
-                            $group: {
-                                _id: { $dateToString: { format: "%Y-%m", date: "$datetime" } },
-                            }
-                        }, {
-                            $sort: {
-                                "_id": 1
-                            }
-                        }],
-                    day: [{
-                            $group: {
-                                _id: { $dateToString: { format: "%Y-%m-%d", date: "$datetime" } },
-                            }
-                        }, {
-                            $sort: {
-                                "_id": 1
-                            }
-                        }]
-                }
-            }]
-        fields.forEach(field => {
-            pipeline[0]['$facet'].year[0]['$group'][field] = { $sum: `$data.${field}` }
-            pipeline[0]['$facet'].month[0]['$group'][field] = { $sum: `$data.${field}` }
-            pipeline[0]['$facet'].day[0]['$group'][field] = { $sum: `$data.${field}` }
-        })
-        return pipeline
-    }
-    // · 
-    runCommand(command) {
-        return (() => __awaiter(this, void 0, void 0, function* () {
-            let client = yield MongoClient.connect("mongodb://localhost:" + this.config.port)
-            let schema = client.db('localschema')
-            let result = yield schema.command("show collections")
-            if (client) {
-                client.close()
-            }
-            return new Promise((resolve, reject) => {
-                return resolve(result)
-            })
-        }))()
-    }
 }
 
 
 // · 
-module.exports = databaseService
+module.exports = LesliNodeJSMongoDBWrapper
