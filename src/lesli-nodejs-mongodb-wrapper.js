@@ -57,6 +57,8 @@ class LesliNodeJSMongoDBWrapper {
         return schema
     }
 
+
+    // · Parse bytes to human format
     convert_bytes_to_human_value(size, unit = "bytes") {
 
         if (!size || size < 0) {
@@ -115,7 +117,7 @@ class LesliNodeJSMongoDBWrapper {
 
     */
 
-    // · Return info of an individual schema
+    // · Return information about database including a list of collections
     database_read(schema) {
 
         schema = this.parse_schema(schema)
@@ -173,7 +175,7 @@ class LesliNodeJSMongoDBWrapper {
 
     }
 
-
+    // · Create a new collection and database if it does not exist
     database_collection_create(schema) {
 
         schema = this.parse_schema(schema)
@@ -191,7 +193,7 @@ class LesliNodeJSMongoDBWrapper {
 
     }
 
-
+    // · Return information of a collection
     database_collection_read(schema) {
 
         schema = this.parse_schema(schema)
@@ -230,6 +232,7 @@ class LesliNodeJSMongoDBWrapper {
     }
 
 
+    // · Delete a collection and all documents
     database_collection_delete(schema) {
 
         schema = this.parse_schema(schema)
@@ -246,15 +249,17 @@ class LesliNodeJSMongoDBWrapper {
 
     }
 
-    database_collection_documents(schema) {
+    // · Return all documents in a collection
+    database_collection_documents(schema, query = {}) {
 
         return this.aggregate(
             this.parse_schema(schema),           // schema
-            this.aggregationPipelineQuery({})    // pipeline
+            this.aggregationPipelineQuery(query)    // pipeline
         )
 
     }
 
+    // · Create a new document in a collection
     database_collection_document_create(schema, document) {
 
         schema = this.parse_schema(schema)
@@ -362,8 +367,8 @@ class LesliNodeJSMongoDBWrapper {
 
         // Get N last records
         if (query.last && query.last != "" && query.last > 0) {
-            pipeline[0]["$facet"].rows[1]["$sort"]["datetime"] = -1
-            pipeline[0]["$facet"].rows[3]["$limit"] = parseInt(query.last)
+            pipeline[0]["$facet"].documents[1]["$sort"]["datetime"] = -1
+            pipeline[0]["$facet"].documents[3]["$limit"] = parseInt(query.last)
         }
 
         return pipeline
