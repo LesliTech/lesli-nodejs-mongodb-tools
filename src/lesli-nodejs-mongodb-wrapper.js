@@ -48,6 +48,11 @@ class LesliNodeJSMongoDBWrapper {
         this.namespace = config.namespace
     }
 
+    database_collection_documents(schema, query = {}) {
+        return this._database_collection_documents(schema, query)
+    }
+
+
 
     // · Parse schema information
     // · Return standard namespace - database -collection structure
@@ -250,11 +255,11 @@ class LesliNodeJSMongoDBWrapper {
     }
 
     // · Return all documents in a collection
-    database_collection_documents(schema, query = {}) {
+    _database_collection_documents(schema, query = {}) {
 
         return this.aggregate(
             this.parse_schema(schema),           // schema
-            this.aggregationPipelineQuery(query)    // pipeline
+            this.aggregationPipelineQuery(query) // pipeline
         )
 
     }
