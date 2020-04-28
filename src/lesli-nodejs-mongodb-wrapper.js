@@ -311,9 +311,15 @@ class LesliNodeJSMongoDBWrapper {
 
             return new Promise((resolve, reject) => {
 
+                var total = 0
+                
+                if (documents[0].documents.length > 0) {
+                    total = documents[0].records[0].total
+                }
+
                 return resolve({
                     records: {
-                        total: documents[0].records[0].total,
+                        total: total,
                         found: documents[0].documents.length
                     },
                     documents: documents[0].documents
