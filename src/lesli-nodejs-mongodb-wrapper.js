@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-ProjectRaven - Backend platform for apps, websites and IoT devices
+Lesli NodeJS MongoDB wrapper - MongoDB query helpers
 
 Powered by https://www.lesli.tech
 Building a better future, one line of code at a time.
@@ -30,28 +30,37 @@ Building a better future, one line of code at a time.
 */
 
 
-// · Import frameworks, libraries and tools
-// · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
+// · 
 const MongoDB = require("mongodb")
-const MongoClient = MongoDB.MongoClient
-const ObjectId = MongoDB.ObjectID
 
 
 // · 
-class LesliNodeJSMongoDBWrapper {
+class LesliNodeJSMongoDBQuery {
+
+    
+    // · 
+    constructor(config) {
+
+        this.namespace = config.namespace
+        
+        this.mongodb = { }
+
+        this.mongodb.client = new MongoDB.MongoClient("mongodb://"+config.host+":"+config.port, { family: 4, useNewUrlParser: true, useUnifiedTopology: true })
+        
+        this.mongodb.connection = this.mongodb.client.connect()
+
+    }
 
 
     // · 
-    constructor(config) {
-        this.client = new MongoClient("mongodb://"+config.host+":"+config.port, { family: 4, useNewUrlParser: true, useUnifiedTopology: true })
-        this.connection = this.client.connect()
-        this.namespace = config.namespace
-    }
-
     database_collection_documents(schema, query = {}) {
         return this._database_collection_documents(schema, query)
     }
 
+    // · 
+    data_within_radius(schema, query) {
+        return this._data_within_radius(schema, query)
+    }
 
 
     // · Parse schema information
@@ -129,7 +138,7 @@ class LesliNodeJSMongoDBWrapper {
 
         return (async() => {
 
-            let database = this.client.db(schema.database)
+            let database = this.mongodb.client.db(schema.database)
 
             let collections = (await database.listCollections().toArray()).map(collection => {
                 return {
@@ -185,9 +194,9 @@ class LesliNodeJSMongoDBWrapper {
 
         schema = this.parse_schema(schema)
 
-        return this.connection.then(e => {
+        return this.mongodb.connection.then(e => {
 
-            let database = this.client.db(schema.database)
+            let database = this.mongodb.client.db(schema.database)
             return database.createCollection(schema.collection)
 
         }).catch(error => {
@@ -203,9 +212,9 @@ class LesliNodeJSMongoDBWrapper {
 
         schema = this.parse_schema(schema)
 
-        return this.connection.then(e => {
+        return this.mongodb.connection.then(e => {
 
-            let database = this.client.db(schema.database)
+            let database = this.mongodb.client.db(schema.database)
 
             let collection = database.collection(schema.collection)
 
@@ -242,9 +251,9 @@ class LesliNodeJSMongoDBWrapper {
 
         schema = this.parse_schema(schema)
 
-        return this.connection.then(e => {
+        return this.mongodb.connection.then(e => {
 
-            let database = this.client.db(schema.database)
+            let database = this.mongodb.client.db(schema.database)
             let collection = database.collection(schema.collection)
             return collection.drop()
 
@@ -269,9 +278,9 @@ class LesliNodeJSMongoDBWrapper {
 
         schema = this.parse_schema(schema)
 
-        return this.connection.then(e => {
+        return this.mongodb.connection.then(e => {
 
-            let database = this.client.db(schema.database)
+            let database = this.mongodb.client.db(schema.database)
             let collection = database.collection(schema.collection)
 
             document.datetime = new Date()
@@ -294,14 +303,95 @@ class LesliNodeJSMongoDBWrapper {
 
     }
 
+    
+    // · Get data inside of given radius
+    _data_within_radius(schema, query) {
+
+        schema = this.parse_schema(schema)
+
+        return this.mongodb.connection.then(e => {
+
+            let database = this.mongodb.client.db(schema.database)
+            
+            let collection = database.collection(schema.collection)
+
+            collection.createIndex({ location: "2dsphere" });
+
+            let radius_of_earth_in_miles = 3963.2
+            let radius_of_earth_in_km = 6378.1
+            let radio_to_search = 0
+
+            /*
+            To convert distance to radians, simply divide the distance
+            value to the radius of the sphere (earth), where:
+            3963.2 is radius of earth in Miles.
+            6378.1 is radius of earth in Km.
+
+            example for 1 kilometer and 1 mile
+            let radio_miles = 1 / 3963.2
+            let radio_km = 1 / 6378.1
+            */
+
+            if (query["kilometers"]) {
+                radio_to_search = query.kilometers/radius_of_earth_in_km
+            }
+
+            return collection.aggregate([  
+                { $geoNear: 
+                    { 
+                        near: {
+                            "type" : "Point",
+                            "coordinates" : [ 
+                                -90.67118835, 
+                                14.57496452
+                            ]
+                        }, 
+                        distanceField: "dist.calculated", 
+                        maxDistance: 50000.00,  
+                        spherical: true, 
+                        distanceMultiplier: 1/1609.344
+                    }
+                }
+            ])
+
+            /*
+            return collection.find({
+                "location": {
+                    $nearSphere: {
+                        $geometry: {
+                            "type" : "Point",
+                            "coordinates" : [ 
+                                -90.67118835, 
+                                14.57496452
+                            ]
+                        }, 
+                        $maxDistance: 50000.00
+                    }
+                }
+            })
+            */ 
+
+            /*
+            return collection.find({
+                "location": {
+                    $geoWithin: {
+                        $centerSphere: [[query.latitude, query.longitude], radio_to_search]
+                    }
+                }
+            })
+            */
+
+        })
+
+    }
 
 
     // · 
     aggregate(schema, aggregation_pipeline) {
 
-        return this.connection.then(e => {
+        return this.mongodb.connection.then(e => {
 
-            let database = this.client.db(schema.database)
+            let database = this.mongodb.client.db(schema.database)
             let collection = database.collection(schema.collection)
             let aggregation = collection.aggregate(aggregation_pipeline)
 
@@ -390,4 +480,4 @@ class LesliNodeJSMongoDBWrapper {
 
 
 // · 
-module.exports = LesliNodeJSMongoDBWrapper
+module.exports = LesliNodeJSMongoDBQuery

@@ -32,6 +32,7 @@ Building a better future, one line of code at a time.
 
 let LesliNodeJSMongoDBWrapper = require("../index")
 
+
 let assert = require("assert")
 
 
@@ -42,12 +43,6 @@ var database = new LesliNodeJSMongoDBWrapper({
     namespace: "mongodb-wrapper"
 })
 
-var database2 = new LesliNodeJSMongoDBWrapper2({
-    enabled: false,
-    host: "localhost",
-    port: "27017",
-    namespace: "mongodb-wrapper"
-})
 
 const schema = {
     database: "tests",
@@ -64,7 +59,7 @@ describe("Test helper parse_schema", () => {
 
 })
 
-/*
+
 describe("Test helper parse_schema", () => {
 
     it("should parse schema for test", done => {
@@ -148,21 +143,6 @@ describe("Test helper convert_bytes_to_human_value", () => {
     it("should convert 1234567890 bytes to human format", done => {
         assert.equal(database.convert_bytes_to_human_value(1234567890), "1.15 gigabytes")
         done()
-    })
-
-})
-
-
-describe("Test connection to database", () => {
-
-    it("should create a connection to mongodb", done => {
-        
-        database.connection.then(result => { 
-            assert.equal(true, true)
-        }).catch(error => {
-            return done(error)
-        }).finally(done)
-
     })
 
 })
@@ -259,4 +239,24 @@ describe("Test database collection document management", () => {
     })
 
 })
-*/
+
+
+describe("Test database geospatial querying", () => {
+
+    it("should list all records within radius of 10kms", done => {
+
+        // first, create
+        database.data_within_radius(schema, {
+            kilometers: 10
+        }).then(result => {
+            
+            assert.equal(true, true)
+
+        }).catch(error => {
+            return done(error)
+        }).finally(done)
+
+    })
+
+})
+
