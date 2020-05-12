@@ -8,6 +8,7 @@ var database2 = new LesliNodeJSMongoDBWrapper2({
     namespace: "project-raven"
 })
 
+/* 
 database2.data_within_radius({
     database: "devices",
     collection: "ldonis66"
@@ -15,6 +16,22 @@ database2.data_within_radius({
     longitude: 14.5591851,
     latitude: -90.7513728,
     kilometers: 8.82
+}).then(result => {
+    result.toArray().then(result => {
+        console.log(result)
+    })
+}).catch(error => {
+    console.log(error)
+})
+*/
+
+database2.data_within_radius({
+    database: "buckets",
+    collection: "klappit-ads"
+}, {
+    longitude: 14.5591851,
+    latitude: -90.7513728,
+    kilometers: 50
 }).then(result => {
     result.toArray().then(result => {
         console.log(result)
