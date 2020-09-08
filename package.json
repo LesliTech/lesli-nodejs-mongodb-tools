@@ -1,16 +1,16 @@
 {
-    "name": "lesli-nodejs-mongodb-wrapper",
-    "description": "MongoDB query helper",
-    "homepage": "https://lesli.dev",
+    "name": "lesli-nodejs-mongodb-tools",
+    "description": "MongoDB tools for Node.js applications",
+    "homepage": "https://lesli.tech",
     "author": "LesliTech <hello@lesli.tech>",
     "license": "GPLv3",
-    "version": "0.1.3",
+    "version": "0.1.0",
     "main": "index.js",
     "dependencies": {
-        "mongodb": "3.5.5"
+        "mongodb": "3.6.1"
     },
     "devDependencies": {
-        "mocha": "7.1.1"
+        "mocha": "8.1.3"
     },
     "scripts": {
         "test": "mocha"

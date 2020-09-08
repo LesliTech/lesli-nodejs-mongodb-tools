@@ -41,9 +41,9 @@ class LesliNodeJSMongoDBQuery {
     // · 
     constructor(config) {
 
-        this.namespace = config.namespace
-        
         this.mongodb = { }
+
+        this.namespace = config.namespace
 
         this.mongodb.client = new MongoDB.MongoClient("mongodb://"+config.host+":"+config.port, { family: 4, useNewUrlParser: true, useUnifiedTopology: true })
         
@@ -52,9 +52,32 @@ class LesliNodeJSMongoDBQuery {
     }
 
 
-    // · 
+    // · Return all documents from database collection
     database_collection_documents(schema, query = {}) {
         return this._database_collection_documents(schema, query)
+    }
+
+    
+    // · Return first record in database collection
+    database_collection_document_first(schema) {
+        return this._database_collection_document_first(schema)
+    }
+
+    // Return all documents from database collection
+    // allowing to filter by query criteria
+    database_collection_document_find(schema, query = {}) {
+        return this._database_collection_document_find(schema, query)
+    }
+
+    // Return all documents from database collection
+    // using advance search criteria
+    database_collection_document_search(schema, query = {}) {
+
+    }
+
+    // · 
+    database_collection_document_create(schema, query = {}) {
+        return this._database_collection_document_create(schema, query)
     }
 
     // · 
@@ -67,7 +90,7 @@ class LesliNodeJSMongoDBQuery {
     // · Return standard namespace - database -collection structure
     parse_schema(schema) {
         schema = Object.assign({ }, schema)
-        schema.database = [this.namespace, schema.database].join('-')
+        schema.database = [this.namespace, schema.schema].join('-')
         return schema
     }
 
@@ -263,18 +286,64 @@ class LesliNodeJSMongoDBQuery {
 
     }
 
-    // · Return all documents in a collection
+    // · Return all documents in a collection allowing to filter by query params
     _database_collection_documents(schema, query = {}) {
-
         return this.aggregate(
             this.parse_schema(schema),           // schema
             this.aggregationPipelineQuery(query) // pipeline
         )
+    }
+
+    // · Find documents in the database
+    _database_collection_document_find(schema, options = {}) {
+
+        schema = this.parse_schema(schema)
+
+        return this.mongodb.connection.then(e => {
+
+            let database = this.mongodb.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+
+            return collection
+                .find(options.query)
+                .toArray()
+
+        }).then(result => {
+
+            return new Promise((resolve, reject) => {
+
+                return resolve({
+                    records: {
+                        total: result.length,
+                        found: result.length
+                    },
+                    documents: result
+                })
+
+            })
+            
+        })
+
+    }
+
+    // · Find documents in the database
+    _database_collection_document_first(schema) {
+
+        schema = this.parse_schema(schema)
+
+        return this.mongodb.connection.then(e => {
+
+            let database = this.mongodb.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+
+            return collection.findOne()
+
+        })
 
     }
 
     // · Create a new document in a collection
-    database_collection_document_create(schema, document) {
+    _database_collection_document_create(schema, document) {
 
         schema = this.parse_schema(schema)
 
