@@ -1,4 +1,3 @@
-/* 
 Lesli
 
 Copyright (c) 2020, Lesli Technologies, S. A.
@@ -27,14 +26,3 @@ Building a better future, one line of code at a time.
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
 // · 
-*/
-
-
-// · 
-module.exports = {
-    query: {
-        database: require('./src/query/database'),
-        collection: require('./src/query/database-collection'),
-        document: require('./src/query/database-collection-document')
-    }
-}

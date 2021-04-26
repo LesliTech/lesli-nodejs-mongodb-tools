@@ -35,6 +35,7 @@ const MongoDB = require("mongodb")
 
 
 // · 
+// · 
 class LesliNodeJSMongoDBQuery {
 
     
@@ -76,8 +77,8 @@ class LesliNodeJSMongoDBQuery {
     }
 
     // · 
-    database_collection_document_create(schema, query = {}) {
-        return this._database_collection_document_create(schema, query)
+    database_collection_document_create(schema, document) {
+        return this._database_collection_document_create(schema, document)
     }
 
     // · 
@@ -90,7 +91,7 @@ class LesliNodeJSMongoDBQuery {
     // · Return standard namespace - database -collection structure
     parse_schema(schema) {
         schema = Object.assign({ }, schema)
-        schema.database = [this.namespace, schema.schema].join('-')
+        schema.database = [this.namespace, schema.database].join('-')
         return schema
     }
 

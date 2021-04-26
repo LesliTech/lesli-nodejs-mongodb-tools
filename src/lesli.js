@@ -1,4 +1,5 @@
-/* 
+"use strict"
+/*
 Lesli
 
 Copyright (c) 2020, Lesli Technologies, S. A.
@@ -30,11 +31,36 @@ Building a better future, one line of code at a time.
 */
 
 
+
 // · 
-module.exports = {
-    query: {
-        database: require('./src/query/database'),
-        collection: require('./src/query/database-collection'),
-        document: require('./src/query/database-collection-document')
+const MongoDB = require("mongodb")
+
+
+
+// · 
+class LesliMongoDB {
+
+    constructor(config) {
+
+        this.mongodb = { }
+
+        this.namespace = config.namespace
+
+        this.mongodb.client = new MongoDB.MongoClient("mongodb://"+config.host+":"+config.port, { family: 4, useNewUrlParser: true, useUnifiedTopology: true })
+        
+        this.mongodb.connection = this.mongodb.client.connect()
+
     }
+
+    schema_parse(schema) {
+        schema = Object.assign({ }, schema)
+        schema.database = [this.namespace, schema.database].join('-')
+        return schema
+    }    
+    
 }
+
+
+
+// · 
+module.exports = LesliMongoDB
