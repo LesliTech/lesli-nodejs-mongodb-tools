@@ -34,3 +34,4 @@ Building a better future, one line of code at a time.
 // · 
 exports.database = require('./database');
 exports.collection = require('./database-collection')
+exports.document = require('./database-collection-document')
