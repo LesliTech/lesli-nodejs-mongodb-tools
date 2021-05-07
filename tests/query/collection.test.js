@@ -1,4 +1,4 @@
-/* 
+/*
 Lesli
 
 Copyright (c) 2020, Lesli Technologies, S. A.
@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-ProjectRaven - Backend platform for apps, websites and IoT devices
+MongoDB tools for Node.js applications
 
 Powered by https://www.lesli.tech
 Building a better future, one line of code at a time.
@@ -30,28 +30,42 @@ Building a better future, one line of code at a time.
 */
 
 
-
-/*
-
-database_read
-
-database_collections
-database_collection_read
-database_collection_create
-database_collection_delete
-
-database_collection_documents
-database_collection_document_read -> content of the document
-database_collection_document_create
-database_collection_document_update
-database_collection_document_delete
-database_collection_document_find
-
-*/
-
+// · 
+let assert = require("assert")
 
 
 // · 
-exports.database = require('./database');
-exports.collection = require('./database-collection')
-exports.document = require('./database-collection-document')
+const LesliNodeJSMongoDBQueryDatabaseCollection = require("../../src/query/database-collection.js")
+
+
+// · 
+var collection = new LesliNodeJSMongoDBQueryDatabaseCollection({
+    enabled: false,
+    host: "localhost",
+    port: "27017",
+    namespace: "project-raven"
+})
+
+
+// · 
+const schema = {
+    database: "buckets",
+    collection: "ldonis"
+}
+
+
+describe("Test helper parse_schema", () => {
+
+    it("should return database info", done => {
+
+        collection.index(schema).then(result => {
+            console.log(result)
+        }).catch(error => {
+            console.log(error)
+        }).finally(() => {
+            done()
+        })
+
+    })
+
+})

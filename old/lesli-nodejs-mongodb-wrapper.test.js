@@ -49,15 +49,7 @@ const schema = {
     collection: "test"
 }
 
-describe("Test helper parse_schema", () => {
 
-    it("should parse schema for test", done => {
-        
-        assert.equal(1,1)
-        done()
-    })
-
-})
 
 
 describe("Test helper parse_schema", () => {
@@ -73,79 +65,7 @@ describe("Test helper parse_schema", () => {
 })
 
 
-describe("Test helper convert_bytes_to_human_value", () => {
 
-    it("should convert undefined bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(), "0 bytes")
-        done()
-    })
-
-    it("should convert null bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(null), "0 bytes")
-        done()
-    })
-
-    it("should convert -10 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(-10), "0 bytes")
-        done()
-    })
-
-    it("should convert 0 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(0), "0 bytes")
-        done()
-    })
-
-    it("should convert 1 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(1), "1 bytes")
-        done()
-    })
-
-    it("should convert 12 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(12), "12 bytes")
-        done()
-    })
-
-    it("should convert 123 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(123), "123 bytes")
-        done()
-    })
-
-    it("should convert 1234 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(1234), "1.21 kilobytes")
-        done()
-    })
-
-    it("should convert 12345 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(12345), "12.06 kilobytes")
-        done()
-    })
-
-    it("should convert 123456 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(123456), "120.56 kilobytes")
-        done()
-    })
-
-    it("should convert 1234567 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(1234567), "1.18 megabytes")
-        done()
-    })
-
-    it("should convert 12345678 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(12345678), "11.77 megabytes")
-        done()
-    })
-
-    it("should convert 123456789 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(123456789), "117.74 megabytes")
-        done()
-    })
-
-    it("should convert 1234567890 bytes to human format", done => {
-        assert.equal(database.convert_bytes_to_human_value(1234567890), "1.15 gigabytes")
-        done()
-    })
-
-})
 
 
 describe("Test database management", () => {

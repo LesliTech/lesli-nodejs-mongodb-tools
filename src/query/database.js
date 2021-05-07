@@ -55,7 +55,6 @@ class LesliNodeJSMongoDBQueryDatabase extends LesliMongoDB {
 
     
     // · 
-    info = (schema) => this._database_read(schema)
     read = (schema) => this._database_read(schema)
 
 

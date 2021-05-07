@@ -551,3 +551,91 @@ class LesliNodeJSMongoDBQuery {
 
 // · 
 module.exports = LesliNodeJSMongoDBQuery
+
+
+
+
+/*
+
+// · Get data inside of given radius
+_data_within_radius(schema, query) {
+
+    schema = this.parse_schema(schema)
+
+    return this.mongodb.connection.then(e => {
+
+        let database = this.mongodb.client.db(schema.database)
+        
+        let collection = database.collection(schema.collection)
+
+        collection.createIndex({ location: "2dsphere" });
+
+        let radius_of_earth_in_miles = 3963.2
+        let radius_of_earth_in_km = 6378.1
+        let radio_to_search = 0
+
+        /*
+        To convert distance to radians, simply divide the distance
+        value to the radius of the sphere (earth), where:
+        3963.2 is radius of earth in Miles.
+        6378.1 is radius of earth in Km.
+
+        example for 1 kilometer and 1 mile
+        let radio_miles = 1 / 3963.2
+        let radio_km = 1 / 6378.1
+        * /
+
+        if (query["kilometers"]) {
+            radio_to_search = query.kilometers/radius_of_earth_in_km
+        }
+
+        return collection.aggregate([  
+            { $geoNear: 
+                { 
+                    near: {
+                        "type" : "Point",
+                        "coordinates" : [ 
+                            -90.67118835, 
+                            14.57496452
+                        ]
+                    }, 
+                    distanceField: "dist.calculated", 
+                    maxDistance: 50000.00,  
+                    spherical: true, 
+                    distanceMultiplier: 1/1609.344
+                }
+            }
+        ])
+
+        /*
+        return collection.find({
+            "location": {
+                $nearSphere: {
+                    $geometry: {
+                        "type" : "Point",
+                        "coordinates" : [ 
+                            -90.67118835, 
+                            14.57496452
+                        ]
+                    }, 
+                    $maxDistance: 50000.00
+                }
+            }
+        })
+        */ 
+
+        /*
+        return collection.find({
+            "location": {
+                $geoWithin: {
+                    $centerSphere: [[query.latitude, query.longitude], radio_to_search]
+                }
+            }
+        })
+        * /
+
+    })
+
+}
+
+*/

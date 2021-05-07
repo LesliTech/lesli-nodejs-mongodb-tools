@@ -58,7 +58,7 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
     info = (schema, query = {}) => this._database_collection_document_find(schema, query)
     read = (schema, query = {}) => this._database_collection_document_find(schema, query)
     index = (schema, query = {}) => this._database_collection_document_index(schema, query)
-    create = (schema, query = {}) => this._database_collection_document_create(schema, document)
+    create = (schema, document) => this._database_collection_document_create(schema, document)
     update = (schema, query = {}) => this._database_collection_document_find(schema, query)
     delete = (schema, query = {}) => this._database_collection_document_find(schema, query)
 

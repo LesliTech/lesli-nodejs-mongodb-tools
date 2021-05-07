@@ -1,7 +1,7 @@
 
 
 exports.converter = {
-    bytes_to_human: (size, unit = "bytes") => {
+    bytes_to_human: function (size, unit = "bytes") {
 
         if (!size || size < 0) {
             size = 0
@@ -17,19 +17,19 @@ exports.converter = {
 
         // converts bytes to kilobytes
         if (unit == units.bytes && size > 1024) {
-            return this.convert_bytes_to_human_value(size / 1024, units.kilobytes)
+            return this.bytes_to_human(size / 1024, units.kilobytes)
         }
 
         // converts kilobytes to megabytes
         if (unit == units.kilobytes && size > 1024) {
             
-            return this.convert_bytes_to_human_value(size / 1024, units.megabytes)
+            return this.bytes_to_human(size / 1024, units.megabytes)
         }
 
         // converts megabytes to gigabyte
         if (unit == units.megabytes && size > 1024) {
             
-            return this.convert_bytes_to_human_value(size / 1024, units.gigabytes)
+            return this.bytes_to_human(size / 1024, units.gigabytes)
         }
 
         // return size with no decimals

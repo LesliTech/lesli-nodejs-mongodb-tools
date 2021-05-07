@@ -54,10 +54,8 @@ class LesliNodeJSMongoDBQueryDatabaseCollection extends LesliMongoDB {
 
 
 
-    // · 
-    info = (schema) => this._database_collection_read(schema) 
+    // ·  
     read = (schema) => this._database_collection_read(schema)
-    index = (schema) => this._database_collection_read(schema)
     create = (schema) => this._database_collection_create(schema)
     delete = (schema) => this._database_collection_delete(schema)
 
