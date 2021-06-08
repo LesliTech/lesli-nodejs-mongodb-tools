@@ -56,7 +56,23 @@ class LesliMongoDB {
         schema = Object.assign({ }, schema)
         schema.database = [this.namespace, schema.database].join('-')
         return schema
-    }    
+    }
+
+    query(request={}) {
+
+        options["pagination"] = {
+            page: 1,
+            perPage: 10
+        }
+
+        options["order"] = {
+            order: "desc",
+            orderBy: "id"
+        }
+
+        return options
+
+    }
     
 }
 
