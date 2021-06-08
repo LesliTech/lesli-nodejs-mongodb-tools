@@ -1,6 +1,6 @@
 {
     "name": "lesli-nodejs-mongodb-tools",
-    "version": "0.2.0",
+    "version": "0.3.1",
     "description": "MongoDB tools for Node.js applications",
     "homepage": "https://lesli.tech",
     "author": "The Lesli Development Team <hello@lesli.tech>",
