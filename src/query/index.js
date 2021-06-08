@@ -40,18 +40,24 @@ database_collection_read
 database_collection_create
 database_collection_delete
 
-database_collection_documents
-database_collection_document_read -> content of the document
+database_collection_document_find
 database_collection_document_create
 database_collection_document_update
 database_collection_document_delete
-database_collection_document_find
+
+database_collection_document_find -> options {
+    last: 1..N,
+    page: 1,
+    perPage: 15,
+    order: "desc",
+    orderColumn: "name"
+}
 
 */
 
 
 
 // · 
-exports.database = require('./database');
-exports.collection = require('./database-collection')
-exports.document = require('./database-collection-document')
+exports.database = require("./database");
+exports.collection = require("./database-collection")
+exports.document = require("./database-collection-document")
