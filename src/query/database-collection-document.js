@@ -38,7 +38,7 @@ const LesliMongoDB = require("../lesli")
 
 
 // · 
-const { schema: schema_tools, converter } = require("../utils")
+const { aggregation_pipeline_query } = require("../utils")
 
 
 
@@ -55,120 +55,25 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
 
 
     // · 
-    info = (schema, query = {}) => this._database_collection_document_find(schema, query)
-    read = (schema, query = {}) => this._database_collection_document_find(schema, query)
-    index = (schema, query = {}) => this._database_collection_document_index(schema, query)
-    create = (schema, document) => this._database_collection_document_create(schema, document)
+    find = (schema, query = {}) => this._database_collection_document_find(schema, query)
+    first = (schema, query = {}) => this._database_collection_document_first(schema, query)
     update = (schema, query = {}) => this._database_collection_document_find(schema, query)
     delete = (schema, query = {}) => this._database_collection_document_find(schema, query)
-
-    search = (schema, query = {}) => this._database_collection_document_find(schema, query)
-    first = (schema, query = {}) => this._database_collection_document_first(schema)
-    find = (schema, query = {}) => this._database_collection_document_find(schema, query)
-
-
-
-    // · Return all documents in a collection allowing to filter by query params
-    _database_collection_document_index(schema, query) {
-        return this.aggregate(
-            this.schema_parse(schema),           // schema
-            this.aggregationPipelineQuery(query) // pipeline
-        )
-    }
+    create = (schema, document) => this._database_collection_document_create(schema, document)
 
 
 
     // · Find documents in the database
-    _database_collection_document_find(schema, options = {}) {
+    _database_collection_document_find(schema, query={}) {
 
-        schema = this.schema_parse(schema)
-
-        return this.mongodb.connection.then(e => {
-
-            let database = this.mongodb.client.db(schema.database)
-            let collection = database.collection(schema.collection)
-
-            return collection
-                .find(options.query)
-                .toArray()
-
-        }).then(result => {
-
-            return new Promise((resolve, reject) => {
-
-                return resolve({
-                    records: {
-                        total: result.length,
-                        found: result.length
-                    },
-                    documents: result
-                })
-
-            })
-            
-        })
-
-    }
-
-
-    
-    // · Find documents in the database
-    _database_collection_document_first(schema) {
-
-        schema = this.schema_parse(schema)
+        var schema = this.schema_parse(schema)
+        var aggregation_query = aggregation_pipeline_query(query)
 
         return this.mongodb.connection.then(e => {
 
             let database = this.mongodb.client.db(schema.database)
             let collection = database.collection(schema.collection)
-
-            return collection.findOne()
-
-        })
-
-    }
-
-
-
-    // · Create a new document in a collection
-    _database_collection_document_create(schema, document) {
-
-        schema = this.schema_parse(schema)
-
-        return this.mongodb.connection.then(e => {
-
-            let database = this.mongodb.client.db(schema.database)
-            let collection = database.collection(schema.collection)
-
-            document.datetime = new Date()
-
-            return collection.insertOne(document)
-
-        }).then(document_insert_result => {
-
-            return new Promise((resolve, reject) => {
-
-                return resolve({
-                    n: document_insert_result.result.n,
-                    ok: document_insert_result.result.ok,
-                    id: document_insert_result.insertedId
-                })
-
-            })
-
-        })
-
-    }
-
-
-    // · 
-    aggregate(schema, aggregation_pipeline) {
-
-        return this.mongodb.connection.then(e => {
-
-            let database = this.mongodb.client.db(schema.database)
-            let collection = database.collection(schema.collection)
-            let aggregation = collection.aggregate(aggregation_pipeline)
+            let aggregation = collection.aggregate(aggregation_query)
 
             return aggregation.toArray()
 
@@ -201,57 +106,52 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
     }
 
 
-    // · 
-    aggregationPipelineQuery(query) {
+    // · Find documents in the database
+    _database_collection_document_first(schema) {
 
-        var pipeline = [{
+        var schema = this.schema_parse(schema)
 
-            // Processes multiple aggregation pipelines 
-            // within a single stage on the same set of input documents.
-            "$facet": {
+        return this.mongodb.connection.then(e => {
 
-                // rows range found
-                "documents": [
-                    { "$match": {}, },
-                    { "$sort": { "datetime": -1 } },
-                    { "$skip": query.skip ? parseInt(query.skip) : 0 },
-                    { "$limit": query.limit ? parseInt(query.limit) : 1000 }
-                ],
+            let database = this.mongodb.client.db(schema.database)
+            let collection = database.collection(schema.collection)
 
-                // total rows found
-                "records": [{ "$count": "total" }]
+            return collection.findOne()
 
-            }
-
-        }]
-
-
-        // Filter by specific field
-        if (query.field && query.field != "") {
-            pipeline[0]["$facet"].rows[0]["$match"][field] = query.text
-        }
-
-
-        // Return records from specific topic
-        if ((query.start && query.start != "") || (query.end && query.end != "")) {
-            pipeline[0]["$facet"].rows[0]["$match"]["datetime"] = {
-                "$gte": query.start ? parseInt(query.start) : 0,
-                "$lte": query.end ? parseInt(query.end) : Date.now(),
-            }
-        }
-
-
-        // Get N last records
-        if (query.last && query.last != "" && query.last > 0) {
-            pipeline[0]["$facet"].documents[1]["$sort"]["datetime"] = -1
-            pipeline[0]["$facet"].documents[3]["$limit"] = parseInt(query.last)
-        }
-
-        return pipeline
+        })
 
     }
-    
 
+
+    // · Create a new document in a collection
+    _database_collection_document_create(schema, document) {
+
+        schema = this.schema_parse(schema)
+
+        return this.mongodb.connection.then(e => {
+
+            let database = this.mongodb.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+
+            document.datetime = new Date()
+
+            return collection.insertOne(document)
+
+        }).then(document_insert_result => {
+
+            return new Promise((resolve, reject) => {
+
+                return resolve({
+                    n: document_insert_result.result.n,
+                    ok: document_insert_result.result.ok,
+                    id: document_insert_result.insertedId
+                })
+
+            })
+
+        })
+
+    }
 
 }
 
