@@ -32,6 +32,7 @@ Building a better future, one line of code at a time.
 
 // · 
 let assert = require("assert")
+var expect = require("chai").expect;
 
 
 // · 
@@ -43,25 +44,84 @@ var collection = new LesliNodeJSMongoDBQueryDatabaseCollection({
     enabled: false,
     host: "localhost",
     port: "27017",
-    namespace: "project-raven"
+    namespace: "mongodb-tools"
 })
 
 
 // · 
 const schema = {
     database: "buckets",
-    collection: "ldonis"
+    collection: "collection-test-"+(new Date()).getTime()
 }
 
+// · 
+const schema_parsed = collection.schema_parse(schema)
 
-describe("Test helper parse_schema", () => {
+describe("query.database-collection", () => {
 
-    it("should return database info", done => {
+    it("should return collection read", done => {
 
-        collection.index(schema).then(result => {
-            console.log(result)
-        }).catch(error => {
-            console.log(error)
+        collection.read(schema).then(result => {
+
+            expect(result).to.have.property("ok")
+            expect(result).to.have.property("document_average_size")
+            expect(result).to.have.property("database_collection_document_count")
+            expect(result).to.have.property("database_collection_uncompressed_data_size")
+
+            expect(result.document_average_size).to.have.property("bytes")
+            expect(result.document_average_size).to.have.property("string")
+            expect(result.database_collection_uncompressed_data_size).to.have.property("bytes")
+            expect(result.database_collection_uncompressed_data_size).to.have.property("string")
+
+        }).finally(() => {
+            done()
+        })
+
+    })
+
+})
+
+describe("query.database-collection 2", () => {
+
+    it("should return collection create", done => {
+
+        collection.create(schema).then(result => {
+
+            expect(result).to.have.property("ok2")
+            expect(result).to.have.property("document_average_size")
+            expect(result).to.have.property("database_collection_document_count")
+            expect(result).to.have.property("database_collection_uncompressed_data_size")
+
+            expect(result.document_average_size).to.have.property("bytes")
+            expect(result.document_average_size).to.have.property("string")
+            expect(result.database_collection_uncompressed_data_size).to.have.property("bytes")
+            expect(result.database_collection_uncompressed_data_size).to.have.property("string")
+
+        }).finally(() => {
+            done()
+        })
+
+    })
+
+})
+
+
+describe("query.database-collection 3", () => {
+
+    it("should return collection delete", done => {
+
+        collection.delete(schema).then(result => {
+
+            expect(result).to.have.property("ok2")
+            expect(result).to.have.property("document_average_size")
+            expect(result).to.have.property("database_collection_document_count")
+            expect(result).to.have.property("database_collection_uncompressed_data_size")
+
+            expect(result.document_average_size).to.have.property("bytes")
+            expect(result.document_average_size).to.have.property("string")
+            expect(result.database_collection_uncompressed_data_size).to.have.property("bytes")
+            expect(result.database_collection_uncompressed_data_size).to.have.property("string")
+
         }).finally(() => {
             done()
         })

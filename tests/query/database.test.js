@@ -51,14 +51,11 @@ var database = new LesliNodeJSMongoDBQueryDatabase({
 
 // · 
 const schema = {
-    database: "tests"
+    database: "buckets"
 }
 
 
-describe("Test helper parse_schema", () => {
-
-    before(async function () {
-    })
+describe("query.database", () => {
 
     it("should return database read", done => {
 
