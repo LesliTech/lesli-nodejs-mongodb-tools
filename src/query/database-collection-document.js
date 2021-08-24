@@ -57,8 +57,8 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
     // · 
     find = (schema, query = {}) => this._database_collection_document_find(schema, query)
     first = (schema, query = {}) => this._database_collection_document_first(schema, query)
-    update = (schema, query = {}) => this._database_collection_document_find(schema, query)
-    delete = (schema, query = {}) => this._database_collection_document_find(schema, query)
+    update = (schema, query, document) => this._database_collection_document_update_one(schema, query, document)
+    delete = (schema, query = {}) => this._database_collection_document_delete_one(schema, query)
     create = (schema, document) => this._database_collection_document_create(schema, document)
 
 
@@ -148,6 +148,69 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
                 })
 
             })
+
+        })
+
+    }
+
+
+    // · Delete document in a collection
+    _database_collection_document_delete_one(schema, query){
+        
+        schema = this.schema_parse(schema)
+
+        return this.mongodb.connection.then(e => {
+            
+            let database = this.mongodb.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+
+            return collection.deleteOne(query)
+            
+        }).then(document_deleted_result => {
+
+            return new Promise((resolve, reject) => {
+
+                return resolve({
+                    n: document_deleted_result.result.n,
+                    ok: document_deleted_result.result.ok,
+                    deletedCount: document_deleted_result.deletedCount
+                })
+
+            })
+
+        })
+
+    }
+
+
+    // · Update document in a collection by query
+    _database_collection_document_update_one(schema, query, document){
+
+        schema = this.schema_parse(schema)
+
+        return this.mongodb.connection.then(e => {
+            
+            let database = this.mongodb.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+
+
+            return collection.updateOne(query, { $set: document })
+
+        }).then(document_updated_result => {
+
+            return new Promise((resolve, reject) => {
+
+                return resolve({
+                    n: document_updated_result.result.n,
+                    ok: document_updated_result.result.ok,
+                    updatedCount: document_updated_result.result.nModified
+                })
+
+            })
+
+        }).catch(error => {
+
+            console.log(error);
 
         })
 

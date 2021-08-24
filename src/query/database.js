@@ -38,7 +38,7 @@ const LesliMongoDB = require("../lesli")
 
 
 // · 
-const { schema: schema_tools, converter } = require("../utils")
+const { schema: schema_tools, bytes_to_human: converter } = require("../utils")
 
 
 
@@ -56,7 +56,7 @@ class LesliNodeJSMongoDBQueryDatabase extends LesliMongoDB {
     
     // · 
     read = (schema) => this._database_read(schema)
-
+    delete = (schema) => this._database_delete(schema)
 
 
     // · Return information about database including a list of collections
@@ -83,24 +83,24 @@ class LesliNodeJSMongoDBQueryDatabase extends LesliMongoDB {
                 database_collection_document_count: information.objects,
                 database_uncompressed_data_size: {
                     bytes: information.dataSize,
-                    string: converter.bytes_to_human(information.dataSize)
+                    string: converter(information.dataSize)
                 },
                 database_storage_size: {
                     bytes: information.storageSize,
-                    human: converter.bytes_to_human(information.storageSize)
+                    human: converter(information.storageSize)
                 },
                 document_average_size: {
                     bytes: information.avgObjSize,
-                    human: converter.bytes_to_human(information.avgObjSize)
+                    human: converter(information.avgObjSize)
                 },
                 indexes: information.indexes,
                 indexes_size: {
                     bytes: information.indexSize,
-                    human: converter.bytes_to_human(information.indexSize)
+                    human: converter(information.indexSize)
                 },
                 filesystem_available_space: {
                     bytes: information.fsTotalSize - information.fsUsedSize,
-                    human: converter.bytes_to_human(information.fsTotalSize - information.fsUsedSize)
+                    human: converter(information.fsTotalSize - information.fsUsedSize)
                 }
             }
 
@@ -114,6 +114,24 @@ class LesliNodeJSMongoDBQueryDatabase extends LesliMongoDB {
             })
 
         })()
+
+    }
+
+    _database_delete(schema){
+
+        schema = this.schema_parse(schema)
+
+        return this.mongodb.connection.then(e => {
+
+            let database = this.mongodb.client.db(schema.database)
+
+            return database.dropDatabase()
+
+        }).catch(error => {
+
+            console.log(error);
+
+        })
 
     }
 

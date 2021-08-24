@@ -61,6 +61,7 @@ describe("query.database", () => {
 
         database.read(schema).then(result => {
 
+            expect(result).to.have.property("collections")
             expect(result).to.have.property("information")
             expect(result.information).to.have.property("database_name")
             expect(result.information).to.have.property("database_collection_count")
@@ -69,8 +70,22 @@ describe("query.database", () => {
             expect(result.information).to.have.property("database_storage_size")
             expect(result.information).to.have.property("document_average_size")
 
-        }).finally(() => {
+            expect(result.collections).to.be.an("array")
+
             done()
+        })
+
+    })
+
+    it("should return database delete", (done) => {
+
+        database.delete(schema).then(result => {
+
+            expect(result).to.be.a("boolean")
+            expect(result).to.be.equal(true)
+
+            done()
+
         })
 
     })

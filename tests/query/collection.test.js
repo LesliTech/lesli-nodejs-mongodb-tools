@@ -51,7 +51,8 @@ var collection = new LesliNodeJSMongoDBQueryDatabaseCollection({
 // · 
 const schema = {
     database: "buckets",
-    collection: "collection-test-"+(new Date()).getTime()
+    collection: "collection-test-"+(new Date()).getTime(),
+    new_collection_name: `testing-${(new Date()).getTime()}`
 }
 
 // · 
@@ -87,17 +88,10 @@ describe("query.database-collection 2", () => {
 
         collection.create(schema).then(result => {
 
-            expect(result).to.have.property("ok2")
-            expect(result).to.have.property("document_average_size")
-            expect(result).to.have.property("database_collection_document_count")
-            expect(result).to.have.property("database_collection_uncompressed_data_size")
+            expect(result).to.be.an("object")
+            expect(result).to.have.property("s")
+            expect(result.s).to.be.an("object")
 
-            expect(result.document_average_size).to.have.property("bytes")
-            expect(result.document_average_size).to.have.property("string")
-            expect(result.database_collection_uncompressed_data_size).to.have.property("bytes")
-            expect(result.database_collection_uncompressed_data_size).to.have.property("string")
-
-        }).finally(() => {
             done()
         })
 
@@ -106,23 +100,52 @@ describe("query.database-collection 2", () => {
 })
 
 
-describe("query.database-collection 3", () => {
+// describe("query.database-collection 3", () => {
 
-    it("should return collection delete", done => {
+//     it("should return collection delete", done => {
 
-        collection.delete(schema).then(result => {
+//         collection.delete(schema).then(result => {
 
-            expect(result).to.have.property("ok2")
-            expect(result).to.have.property("document_average_size")
-            expect(result).to.have.property("database_collection_document_count")
-            expect(result).to.have.property("database_collection_uncompressed_data_size")
+//             expect(result).to.be.a("boolean")
+//             expect(result).to.be.equal(true)
 
-            expect(result.document_average_size).to.have.property("bytes")
-            expect(result.document_average_size).to.have.property("string")
-            expect(result.database_collection_uncompressed_data_size).to.have.property("bytes")
-            expect(result.database_collection_uncompressed_data_size).to.have.property("string")
+//             done()
+//         })
 
-        }).finally(() => {
+//     })
+
+// })
+
+describe("query.database-collection 4", () => {
+
+    it("expected a collection with new name", (done) => {
+
+        collection.rename(schema).then(result => {
+
+            expect(result).to.be.an("object")
+            expect(result).to.have.property("db")
+            expect(result).to.have.property("collection")
+
+            expect(result.db).to.be.a("string")
+            expect(result.collection).to.be.a("string")
+
+            expect(result.db).to.equal(`mongodb-tools-${schema.database}`)
+
+            done()
+        })
+
+    })
+
+})
+
+describe("query.database-collection 5", () => {
+
+    it("expected all documents from a collection", (done) => {
+
+        collection.list_documents(schema).then(result => {
+
+            expect(result).to.be.an("array")
+
             done()
         })
 

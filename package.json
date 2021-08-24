@@ -17,6 +17,7 @@
         "test": "mocha",
         "test:query:database": "clear && mocha --reporter spec 'tests/query/database.test.js' --exit",
         "test:query:collection": "clear && mocha --reporter spec 'tests/query/collection.test.js' --exit",
-        "test:utils": "clear && mocha --reporter spec 'tests/utils/*.test.js' --exit"
+        "test:utils": "clear && mocha --reporter spec 'tests/utils/*.test.js' --exit",
+        "test:query:document": "clear && mocha --reporter spec 'tests/query/document.test.js' --exit"
     }
 }
