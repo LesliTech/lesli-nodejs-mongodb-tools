@@ -100,22 +100,6 @@ describe("query.database-collection 2", () => {
 })
 
 
-// describe("query.database-collection 3", () => {
-
-//     it("should return collection delete", done => {
-
-//         collection.delete(schema).then(result => {
-
-//             expect(result).to.be.a("boolean")
-//             expect(result).to.be.equal(true)
-
-//             done()
-//         })
-
-//     })
-
-// })
-
 describe("query.database-collection 4", () => {
 
     it("expected a collection with new name", (done) => {
@@ -131,6 +115,8 @@ describe("query.database-collection 4", () => {
 
             expect(result.db).to.equal(`mongodb-tools-${schema.database}`)
 
+            schema.collection = schema.new_collection_name
+
             done()
         })
 
@@ -145,6 +131,22 @@ describe("query.database-collection 5", () => {
         collection.list_documents(schema).then(result => {
 
             expect(result).to.be.an("array")
+
+            done()
+        })
+
+    })
+
+})
+
+describe("query.database-collection 3", () => {
+
+    it("should return collection delete", done => {
+
+        collection.delete(schema).then(result => {
+
+            expect(result).to.be.a("boolean")
+            expect(result).to.be.equal(true)
 
             done()
         })
