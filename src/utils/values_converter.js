@@ -1,5 +1,5 @@
 
-exports.bytes_to_human = function (size, unit = "bytes") {
+const bytes_to_human = (size, unit = "bytes") => {
 
     if (!size || size < 0) {
         size = 0
@@ -15,19 +15,19 @@ exports.bytes_to_human = function (size, unit = "bytes") {
 
     // converts bytes to kilobytes
     if (unit == units.bytes && size > 1024) {
-        return this.bytes_to_human(size / 1024, units.kilobytes)
+        bytes_to_human(size / 1024, units.kilobytes)
     }
 
     // converts kilobytes to megabytes
     if (unit == units.kilobytes && size > 1024) {
         
-        return this.bytes_to_human(size / 1024, units.megabytes)
+        bytes_to_human(size / 1024, units.megabytes)
     }
 
     // converts megabytes to gigabyte
     if (unit == units.megabytes && size > 1024) {
         
-        return this.bytes_to_human(size / 1024, units.gigabytes)
+        bytes_to_human(size / 1024, units.gigabytes)
     }
 
     // return size with no decimals
@@ -38,4 +38,8 @@ exports.bytes_to_human = function (size, unit = "bytes") {
     // return size with decimals
     return [size.toFixed(decimals), unit].join(" ")
 
+}
+
+module.exports = {
+    bytes_to_human
 }

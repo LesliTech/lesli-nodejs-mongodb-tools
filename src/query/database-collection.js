@@ -38,7 +38,7 @@ const LesliMongoDB = require("../lesli")
 
 
 // · 
-const { schema: schema_tools, converter } = require("../utils")
+const { schema: schema_tools, bytes_to_human: converter } = require("../utils")
 
 
 
@@ -58,7 +58,8 @@ class LesliNodeJSMongoDBQueryDatabaseCollection extends LesliMongoDB {
     read = (schema) => this._database_collection_read(schema)
     create = (schema) => this._database_collection_create(schema)
     delete = (schema) => this._database_collection_delete(schema)
-
+    rename = (schema) => this._database_collection_rename(schema)
+    list_documents = (schema) => this._database_collection_documents(schema)
 
 
     // · Return information of a collection
@@ -83,11 +84,11 @@ class LesliNodeJSMongoDBQueryDatabaseCollection extends LesliMongoDB {
                     database_collection_document_count: collection_stats.count,
                     database_collection_uncompressed_data_size: {
                         bytes: collection_stats.size,
-                        string: converter.bytes_to_human(collection_stats.size)
+                        string: converter(collection_stats.size)
                     },
                     document_average_size: {
                         bytes: collection_stats.avgObjSize || 0,
-                        string: converter.bytes_to_human(collection_stats.avgObjSize)
+                        string: converter(collection_stats.avgObjSize)
                     }
                 })
 
@@ -134,6 +135,59 @@ class LesliNodeJSMongoDBQueryDatabaseCollection extends LesliMongoDB {
 
         }).catch(error => {
             console.log(error)
+        })
+
+    }
+
+
+    // · Rename a collection 
+    _database_collection_rename(schema){
+
+        schema = this.schema_parse(schema)
+
+        return this.mongodb.connection.then(e => {
+
+            let database = this.mongodb.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+            
+            return collection.rename(schema.new_collection_name)
+
+        }).then(collection_renamed_result => {
+            
+            return new Promise((resolve, reject) => {
+
+                return resolve({
+                    db: collection_renamed_result.s.namespace.db,
+                    collection: collection_renamed_result.s.namespace.collection
+                })
+
+            })
+
+        }).catch(error => {
+
+            console.log(error);
+
+        })
+
+    }
+
+
+    // · Return all documents in a collection
+    _database_collection_documents(schema){
+
+        schema = this.schema_parse(schema)
+
+        return this.mongodb.connection.then(e => {
+
+            let database = this.mongodb.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+
+            return collection.aggregate().toArray()
+
+        }).catch(error => {
+
+            console.log(error);
+
         })
 
     }
