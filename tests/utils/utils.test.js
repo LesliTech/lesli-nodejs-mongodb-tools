@@ -35,79 +35,79 @@ let assert = require("assert")
 
 
 // · 
-const { converter } = require("../../src/utils")
+const {  bytes_to_human: converter } = require("../../src/utils")
 
 
 // · 
 describe("utils.converter", () => {
 
     it("should convert undefined bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(), "0 bytes")
+        assert.equal(converter(), "0 bytes")
         done()
     })
 
     it("should convert null bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(null), "0 bytes")
+        assert.equal(converter(null), "0 bytes")
         done()
     })
 
     it("should convert -10 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(-10), "0 bytes")
+        assert.equal(converter(-10), "0 bytes")
         done()
     })
 
     it("should convert 0 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(0), "0 bytes")
+        assert.equal(converter(0), "0 bytes")
         done()
     })
 
     it("should convert 1 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(1), "1 bytes")
+        assert.equal(converter(1), "1 bytes")
         done()
     })
 
     it("should convert 12 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(12), "12 bytes")
+        assert.equal(converter(12), "12 bytes")
         done()
     })
 
     it("should convert 123 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(123), "123 bytes")
+        assert.equal(converter(123), "123 bytes")
         done()
     })
 
-    it("should convert 1234 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(1234), "1.21 kilobytes")
+    it("should convert 1234 bytes to human format", done => { 
+        assert.equal(converter(1234), "1.21 kilobytes")
         done()
     })
 
     it("should convert 12345 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(12345), "12.06 kilobytes")
+        assert.equal(converter(12345), "12.06 kilobytes")
         done()
     })
 
     it("should convert 123456 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(123456), "120.56 kilobytes")
+        assert.equal(converter(123456), "120.56 kilobytes")
         done()
     })
 
     it("should convert 1234567 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(1234567), "1.18 megabytes")
+        assert.equal(converter(1234567), "1.18 megabytes")
         done()
     })
 
     it("should convert 12345678 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(12345678), "11.77 megabytes")
+        assert.equal(converter(12345678), "11.77 megabytes")
         done()
     })
 
     it("should convert 123456789 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(123456789), "117.74 megabytes")
+        assert.equal(converter(123456789), "117.74 megabytes")
         done()
     })
 
     it("should convert 1234567890 bytes to human format", done => {
-        assert.equal(converter.bytes_to_human(1234567890), "1.15 gigabytes")
+        assert.equal(converter(1234567890), "1.15 gigabytes")
         done()
     })
 

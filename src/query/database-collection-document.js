@@ -60,6 +60,7 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
     update = (schema, query, document) => this._database_collection_document_update_one(schema, query, document)
     delete = (schema, query = {}) => this._database_collection_document_delete_one(schema, query)
     create = (schema, document) => this._database_collection_document_create(schema, document)
+    list = (schema) => this._database_collection_document_list(schema)
 
 
 
@@ -118,6 +119,10 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
 
             return collection.findOne()
 
+        }).catch(error => {
+
+            console.log(error);
+
         })
 
     }
@@ -149,6 +154,10 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
 
             })
 
+        }).catch(error => {
+
+            console.log(error);
+
         })
 
     }
@@ -177,6 +186,10 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
                 })
 
             })
+
+        }).catch(error => {
+
+            console.log(error);
 
         })
 
@@ -207,6 +220,26 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
                 })
 
             })
+
+        }).catch(error => {
+
+            console.log(error);
+
+        })
+
+    }
+
+    // · Return all documents in a collection
+    _database_collection_document_list(schema){
+
+        schema = this.schema_parse(schema)
+
+        return this.mongodb.connection.then(e => {
+
+            let database = this.mongodb.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+
+            return collection.aggregate().toArray()
 
         }).catch(error => {
 

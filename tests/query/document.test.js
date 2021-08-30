@@ -132,6 +132,17 @@ describe("query.database-collection-document", () => {
 
     })
 
+    it("expected all documents from a collection", (done) => {
+
+        document.list(schema).then(result => {
+            // -
+            expect(result).to.be.an("array")
+
+            done()
+        })
+
+    })
+
     it("expected a document deleted", (done) => {
 
         document.delete(schema, {"username": "rocky"}).then(result => {

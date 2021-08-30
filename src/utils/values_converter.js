@@ -15,19 +15,19 @@ const bytes_to_human = (size, unit = "bytes") => {
 
     // converts bytes to kilobytes
     if (unit == units.bytes && size > 1024) {
-        bytes_to_human(size / 1024, units.kilobytes)
+        return bytes_to_human(size / 1024, units.kilobytes)
     }
 
     // converts kilobytes to megabytes
     if (unit == units.kilobytes && size > 1024) {
         
-        bytes_to_human(size / 1024, units.megabytes)
+        return bytes_to_human(size / 1024, units.megabytes)
     }
 
     // converts megabytes to gigabyte
     if (unit == units.megabytes && size > 1024) {
         
-        bytes_to_human(size / 1024, units.gigabytes)
+        return bytes_to_human(size / 1024, units.gigabytes)
     }
 
     // return size with no decimals
