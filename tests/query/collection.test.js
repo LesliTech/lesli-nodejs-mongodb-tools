@@ -74,7 +74,6 @@ describe("query.database-collection", () => {
             expect(result.database_collection_uncompressed_data_size).to.have.property("bytes")
             expect(result.database_collection_uncompressed_data_size).to.have.property("string")
 
-        }).finally(() => {
             done()
         })
 
@@ -115,6 +114,7 @@ describe("query.database-collection 4", () => {
 
             expect(result.db).to.equal(`mongodb-tools-${schema.database}`)
 
+            // - Change the collection name property, because now it is different
             schema.collection = schema.new_collection_name
 
             done()
@@ -124,20 +124,6 @@ describe("query.database-collection 4", () => {
 
 })
 
-describe("query.database-collection 5", () => {
-
-    it("expected all documents from a collection", (done) => {
-
-        collection.list_documents(schema).then(result => {
-
-            expect(result).to.be.an("array")
-
-            done()
-        })
-
-    })
-
-})
 
 describe("query.database-collection 3", () => {
 

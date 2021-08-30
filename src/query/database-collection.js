@@ -59,7 +59,6 @@ class LesliNodeJSMongoDBQueryDatabaseCollection extends LesliMongoDB {
     create = (schema) => this._database_collection_create(schema)
     delete = (schema) => this._database_collection_delete(schema)
     rename = (schema) => this._database_collection_rename(schema)
-    list_documents = (schema) => this._database_collection_documents(schema)
 
 
     // · Return information of a collection
@@ -162,27 +161,6 @@ class LesliNodeJSMongoDBQueryDatabaseCollection extends LesliMongoDB {
                 })
 
             })
-
-        }).catch(error => {
-
-            console.log(error);
-
-        })
-
-    }
-
-
-    // · Return all documents in a collection
-    _database_collection_documents(schema){
-
-        schema = this.schema_parse(schema)
-
-        return this.mongodb.connection.then(e => {
-
-            let database = this.mongodb.client.db(schema.database)
-            let collection = database.collection(schema.collection)
-
-            return collection.aggregate().toArray()
 
         }).catch(error => {
 
