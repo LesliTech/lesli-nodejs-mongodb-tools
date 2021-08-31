@@ -33,7 +33,7 @@ This software is completely free and open source
 
 
 
-### API
+## API
 ------
 ```js
 let { database: Database, collection: Collection, document: Document } = require("lesli-nodejs-mongodb-tools")
@@ -41,7 +41,7 @@ let { database: Database, collection: Collection, document: Document } = require
 
 
 
-#### Usage
+### Usage
 ------
 Before start using the library, create instances of `Database`, `Collection` and `Document`.
 ```js
@@ -50,8 +50,8 @@ Before start using the library, create instances of `Database`, `Collection` and
     let document = new Document(configuration.database)
 ```
 
-##### Defining a schema
-A `schema` will help us to manage our mongodb inserts, is basicly an object with properties: **database** and **collection**.
+#### Defining a schema
+A `schema` will help us to manage our mongodb inserts, is basically an object with properties: **database** and **collection**.
 Example:
 
 ```js
@@ -63,9 +63,9 @@ Example:
 
 In the next mongodb methods will be necessary to send a schema as arguments.
 
-##### Database methods
+### Database methods
 ------
-###### database.read(schema)
+#### database.read(schema)
 Returns an object with information about a database specified by the given `schema`.
 
 ```js
@@ -92,7 +92,7 @@ Let's see another example:
     })
 ```
 
-###### database.delete(schema)
+#### database.delete(schema)
 Return `true` value if the database was deleted successfully. 
 Example:
 
@@ -111,7 +111,7 @@ Example:
 
 
 
-##### Collection methods
+### Collection methods
 ------
 ###### collection.read(schema)
 Read information about a collection by the given `schema`.
@@ -121,7 +121,7 @@ Example:
     let read_collection = async(schema) => await collection.read(schem)
 ```
 
-###### collection.create(schema)
+#### collection.create(schema)
 Creates new collection and returns a cursor with information about the collection created. 
 Example:
 
@@ -129,7 +129,7 @@ Example:
     let create_collection = async(schema) => await collection.create(schema)
 ```
 
-###### collection.delete(schema)
+#### collection.delete(schema)
 Delete a collection, returns `true` if everything was successful.
 Example:
 
@@ -137,7 +137,7 @@ Example:
     let delete_collection = async(schema) => await collection.delete(schema)
 ```
 
-###### collection.rename(schema)
+#### collection.rename(schema)
 Change the current collection name and put the new by the given `schema`, you have to add a new property into the `schema` object named `new_collection_name`.
 Example:
 
@@ -164,7 +164,7 @@ Example:
 
 
 
-##### Document methods
+### Document methods
 ------
 ###### document.create(schema, document)
 Create document into the specified collection by the given `schema`. `Document` should be an object or JSON with properties key => value that you want to save. Returns information about if everything happened correctly.
@@ -181,7 +181,7 @@ Example:
     save_document(schema, { "name": "bob", "lastname": "sponge" })
 ```
 
-###### document.find(schema, query?)
+#### document.find(schema, query?)
 Finds documents into the database and collection specified by the given `schema`. With `query` argument is possible to add aggregation pipelines, so you can add a custom query.
 Example: 
 
@@ -189,7 +189,7 @@ Example:
     let find_document = async(schema, query = {}) => await document.find(schema, query)
 ```
 
-###### document.first(schema, query?)
+#### document.first(schema, query?)
 Returns the first document found.
 Example:
 
@@ -197,7 +197,7 @@ Example:
     let first_document = async(schema, query = {}) => await document.find(schema, query) // {}
 ```
 
-###### document.delete(schema, query)
+#### document.delete(schema, query)
 Delete document in a collection, returns an object with information about if everything happend correctly. Should receive `query` argument to filter what document do you want to delete.
 Example:
 
@@ -207,7 +207,7 @@ Example:
     delete_document({ "name": "bob" })
 ```
 
-###### document.list(schema)
+#### document.list(schema)
 Returns all documents in a collection. If there are not documents, returns an empty array.
 
 ```js
