@@ -255,7 +255,7 @@ $  npm run test
 ```
 
 #### Execute specific unit tests
-You run can specific uni tests either for `Database`, `Collection` or `Document`.  <br />
+You can run specific uni tests either for `Database`, `Collection` or `Document`.  <br />
 Run the next commands:
 
 ##### Execute unit tests for Databases
