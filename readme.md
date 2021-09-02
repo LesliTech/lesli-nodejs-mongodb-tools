@@ -6,7 +6,7 @@
 
 <hr/>
 
-Version 0.4.0 
+**Version 0.4.0** 
 
 ## Table of Contents
 * [Installation](#installation)
@@ -144,7 +144,7 @@ Example:
 ```
 
 #### collection.rename(schema)
-Change the current collection name and put the new by the given `schema`, you have to add a new property into the `schema` object named `new_collection_name`.  <br />
+Change the current collection name and put the new by the given `schema`, you have to add a new property into the `schema` object called `new_collection_name`.  <br />
 Example:
 
 ```js
@@ -255,7 +255,7 @@ $  npm run test
 ```
 
 #### Execute specific unit tests
-You run can specific uni tests either for `Database`, `Collection` or `Document`.  <br />
+You can run specific uni tests either for `Database`, `Collection` or `Document`.  <br />
 Run the next commands:
 
 ##### Execute unit tests for Databases
