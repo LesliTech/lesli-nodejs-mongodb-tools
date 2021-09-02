@@ -8,33 +8,37 @@
 
 Version 0.4.0 
 
-
-
-#### Installation
---------
-```
-npm install lesli-nodejs-mongodb-tools --save  
-```
-
-
-
-* [Get starter](./docs/get-starter.md)
-* [Database query](./docs/database-query.md)
+## Table of Contents
+* [Installation](#installation)
+* [Website & documentation](#website--documentation)
+* [Get starter](#get-starter)
+* [Usage](#usage)
+    - [Database query](#database-queries)
+    - [Collection query](#collection-queries)
+    - [Document query](#document-queries)
+* [Unit tests](#unit-tests)
+    - [Execute all unit tests](#execute-all-unit-tests)
+    - [Execute specific unit tests](#execute-specific-unit-tests)
 * [Geolocation](./docs/geolocation.md)
 
+### Installation
+--------
+```console
+$  npm install lesli-nodejs-mongodb-tools --save  
+```
 
-
-#### Website & documentation
+### Website & documentation
 -------
 
-This software is completely free and open source
+This software is completely free and open source 
 
 * Issue tracker: [https://github.com/LesliTech/lesli-nodejs-mongodb-tools/issues](https://github.com/LesliTech/lesli-nodejs-mongodb-tools/issues)
 
 
 
-## API
+## Get starter
 ------
+First of all, import `lesli-nodejs-mongodb-tools`.  
 ```js
 let { database: Database, collection: Collection, document: Document } = require("lesli-nodejs-mongodb-tools")
 ```
@@ -43,15 +47,17 @@ let { database: Database, collection: Collection, document: Document } = require
 
 ### Usage
 ------
-Before start using the library, create instances of `Database`, `Collection` and `Document`.
+Before start using the library, create instances of `Database`, `Collection` and `Document`.  
 ```js
     let database = new Document(configuration.database)
     let collection = new Collection(configuration.database)
     let document = new Document(configuration.database)
 ```
 
-#### Defining a schema
-A `schema` will help us to manage our mongodb inserts, is basically an object with properties: **database** and **collection**.
+> `configuration.database` comes from [lesli-nodejs-configuration](https://www.npmjs.com/package/lesli-nodejs-configuration)
+
+#### Define a schema
+A `schema` will help us to manage our mongodb inserts, is basically an object with properties: **database** and **collection**.  <br />
 Example:
 
 ```js
@@ -61,12 +67,12 @@ Example:
     }
 ```
 
-In the next mongodb methods will be necessary to send a schema as arguments.
+> In the next mongodb methods will be necessary to send a schema as arguments.  
 
-### Database methods
+### Database queries
 ------
 #### database.read(schema)
-Returns an object with information about a database specified by the given `schema`.
+Return an object with information about a database specified by the given `schema`.  
 
 ```js
     let get_database_information = async(schema) => {
@@ -77,7 +83,7 @@ Returns an object with information about a database specified by the given `sche
     }
 ```
 
-All of these methods return promises, so you can use `async` and `await` or only promises with `then` and `catch`.
+All of these methods return promises, so you can use `async` and `await` or only promises with `then` and `catch`.  <br />
 Let's see another example:
 
 ```js
@@ -93,7 +99,7 @@ Let's see another example:
 ```
 
 #### database.delete(schema)
-Return `true` value if the database was deleted successfully. 
+Return `true` if the database was deleted successfully.  <br />
 Example:
 
 ```js
@@ -111,10 +117,10 @@ Example:
 
 
 
-### Collection methods
+### Collection queries
 ------
-###### collection.read(schema)
-Read information about a collection by the given `schema`.
+#### collection.read(schema)
+Read information about a collection by the given `schema`.  <br />
 Example:
 
 ```js
@@ -122,7 +128,7 @@ Example:
 ```
 
 #### collection.create(schema)
-Creates new collection and returns a cursor with information about the collection created. 
+Create new collection and return a cursor with information about the collection created.  <br />
 Example:
 
 ```js
@@ -130,7 +136,7 @@ Example:
 ```
 
 #### collection.delete(schema)
-Delete a collection, returns `true` if everything was successful.
+Delete a collection, return `true` if everything was successful.  <br />
 Example:
 
 ```js
@@ -138,7 +144,7 @@ Example:
 ```
 
 #### collection.rename(schema)
-Change the current collection name and put the new by the given `schema`, you have to add a new property into the `schema` object named `new_collection_name`.
+Change the current collection name and put the new by the given `schema`, you have to add a new property into the `schema` object named `new_collection_name`.  <br />
 Example:
 
 ```js
@@ -149,7 +155,7 @@ Example:
     }
 ```
 
-This method returns an object with database information, such as the new name of the collection and the database name.
+This method will return an object with database information, such as the new name of the collection and the database name.  <br />
 Example:
 
 ```js
@@ -164,10 +170,10 @@ Example:
 
 
 
-### Document methods
+### Document queries
 ------
-###### document.create(schema, document)
-Create document into the specified collection by the given `schema`. `Document` should be an object or JSON with properties key => value that you want to save. Returns information about if everything happened correctly.
+#### document.create(schema, document)
+Create document into the specified collection by the given `schema`. `document` should be an object or JSON with properties key => value that you want to save. Return information about if everything happened correctly.  <br />
 Example:
 
 ```js
@@ -182,7 +188,7 @@ Example:
 ```
 
 #### document.find(schema, query?)
-Finds documents into the database and collection specified by the given `schema`. With `query` argument is possible to add aggregation pipelines, so you can add a custom query.
+Find documents into the database and collection specified by the given `schema`. With `query` argument is possible to add aggregation pipelines, so you can add a custom query.  <br />
 Example: 
 
 ```js
@@ -190,31 +196,89 @@ Example:
 ```
 
 #### document.first(schema, query?)
-Returns the first document found.
+Return the first document found.  <br />
 Example:
 
 ```js
-    let first_document = async(schema, query = {}) => await document.find(schema, query) // {}
+    let first_document = async(schema, query = {}) => await document.first(schema, query) // {}
+```
+
+
+#### document.update(schema, query, document)
+Update one document in the database. You can filter by the given `query`, related to the data you want to update and `document` the new data.   
+For example, we are going to update the document created previously.
+
+```js
+    let query = {
+        "name": "bob",
+        "lastname": "sponge" 
+    }
+
+    let document = {
+        "name": "Tom",
+        "lastname": "Mate"
+    }
+
+    let update_one = async(schema, query, document) =>  await document.update(schema, query, document)
+
+    // Call function
+    update_one(schema, query, document)
 ```
 
 #### document.delete(schema, query)
-Delete document in a collection, returns an object with information about if everything happend correctly. Should receive `query` argument to filter what document do you want to delete.
+Delete document in a collection, returns an object with information about if everything happend correctly. Should receive `query` argument to filter what document do you want to delete.  <br />
 Example:
 
 ```js
     let delete_document = async(schema, query) => await document.delete(schema, query)
     
-    delete_document({ "name": "bob" })
+    delete_document({ "name": "Tom" })
 ```
 
 #### document.list(schema)
-Returns all documents in a collection. If there are not documents, returns an empty array.
-
+Return all documents in a collection. If there are not documents, returns an empty array.   <br />
+Example:
 ```js
     let list_documents = async(schema) => await document.list(schema)
 ```
 
 
+### Unit tests
+------
+This library implements unit tests with [Mocha JS](https://mochajs.org/) and [Chai JS](https://www.chaijs.com/api/bdd/) to validate if all methods saw previously work correctly. There are unit tests for `Database`, `Collection` and `Document`. You can test each of their methods.  
+
+#### Execute all unit tests
+If you want to test if all methods work correctly, run the next command in your MAC/Linux terminal or Windows CMD.  <br />
+
+```console
+$  npm run test
+```
+
+#### Execute specific unit tests
+You run can specific uni tests either for `Database`, `Collection` or `Document`.  <br />
+Run the next commands:
+
+##### Execute unit tests for Databases
+```console
+$  npm run test:query:database
+```
+
+##### Execute unit tests for Collections
+```console
+$  npm run test:query:collection
+```
+
+##### Execute unit tests for Documents
+```console
+$  npm run test:query:document
+```
+
+###### Execute uni tests for Utils
+These tests are useful for the others tests.  <br />
+
+```console
+$  npm run test:utils
+```
 
 ### License  
 ------
