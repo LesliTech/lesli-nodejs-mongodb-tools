@@ -34,7 +34,7 @@ Building a better future, one line of code at a time.
 
 // · 
 const LesliMongoDB = require("../lesli")
-
+const { ObjectId } = require("mongodb")
 
 
 // · 
@@ -168,6 +168,11 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
         
         schema = this.schema_parse(schema)
 
+        // Parse string Id to ObjectId
+        if(query._id){
+            query._id = ObjectId(query._id)
+        }
+
         return this.mongodb.connection.then(e => {
             
             let database = this.mongodb.client.db(schema.database)
@@ -198,6 +203,10 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
 
     // · Update document in a collection by query
     _database_collection_document_update_one(schema, query, document){
+        
+        // Get the ID document that will be updated
+        // Parse string Id to ObjectId
+        let idDocument = ObjectId(query._id)
 
         schema = this.schema_parse(schema)
 
@@ -207,7 +216,7 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
             let collection = database.collection(schema.collection)
 
 
-            return collection.updateOne(query, { $set: document })
+            return collection.updateOne({ _id: idDocument}, { $set: document })
 
         }).then(document_updated_result => {
 
