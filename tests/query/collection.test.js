@@ -26,20 +26,20 @@ Building a better future, one line of code at a time.
 @license  GPLv3 http://www.gnu.org/licenses/gpl-3.0.en.html
 
 // · ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~     ~·~
-// · 
+// ·
 */
 
 
-// · 
+// ·
 let assert = require("assert")
 var expect = require("chai").expect;
 
 
-// · 
+// ·
 const LesliNodeJSMongoDBQueryDatabaseCollection = require("../../src/query/database-collection.js")
 
 
-// · 
+// ·
 var collection = new LesliNodeJSMongoDBQueryDatabaseCollection({
     enabled: false,
     host: "localhost",
@@ -48,52 +48,60 @@ var collection = new LesliNodeJSMongoDBQueryDatabaseCollection({
 })
 
 
-// · 
+// ·
 const schema = {
     database: "buckets",
-    collection: "collection-test-"+(new Date()).getTime(),
-    new_collection_name: `testing-${(new Date()).getTime()}`
+    collection: "collection-test",
+    new_collection_name: `testing`
 }
 
-// · 
+// ·
 const schema_parsed = collection.schema_parse(schema)
 
 describe("query.database-collection", () => {
 
-    it("should return collection read", done => {
+    before(async function () {
+        await collection.delete(schema)
+        await collection.create(schema)
+        this.result = await collection.read(schema)
+    })
 
-        collection.read(schema).then(result => {
+    it("should return collection read", function () {
 
-            expect(result).to.have.property("ok")
-            expect(result).to.have.property("document_average_size")
-            expect(result).to.have.property("database_collection_document_count")
-            expect(result).to.have.property("database_collection_uncompressed_data_size")
+        expect(this.result).to.have.property("ok")
+        expect(this.result).to.have.property("document_average_size")
+        expect(this.result).to.have.property("database_collection_document_count")
+        expect(this.result).to.have.property("database_collection_uncompressed_data_size")
 
-            expect(result.document_average_size).to.have.property("bytes")
-            expect(result.document_average_size).to.have.property("string")
-            expect(result.database_collection_uncompressed_data_size).to.have.property("bytes")
-            expect(result.database_collection_uncompressed_data_size).to.have.property("string")
+        expect(this.result.document_average_size).to.have.property("bytes")
+        expect(this.result.document_average_size).to.have.property("string")
+        expect(this.result.database_collection_uncompressed_data_size).to.have.property("bytes")
+        expect(this.result.database_collection_uncompressed_data_size).to.have.property("string")
 
-            done()
-        })
+    })
 
+    after(async function () {
+        await collection.delete(schema)
     })
 
 })
 
-describe("query.database-collection 2", () => {
+describe("query.database-collection", () => {
 
-    it("should return collection create", done => {
+    before(async function () {
+        this.result = await collection.create(schema)
+    })
 
-        collection.create(schema).then(result => {
+    it("should return collection create", function () {
 
-            expect(result).to.be.an("object")
-            expect(result).to.have.property("s")
-            expect(result.s).to.be.an("object")
+        expect(this.result).to.be.an("object")
+        expect(this.result).to.have.property("s")
+        expect(this.result.s).to.be.an("object")
 
-            done()
-        })
+    })
 
+    after(async function () {
+        await collection.delete(schema)
     })
 
 })
@@ -101,25 +109,30 @@ describe("query.database-collection 2", () => {
 
 describe("query.database-collection 4", () => {
 
-    it("expected a collection with new name", (done) => {
+    before(async function () {
+        await collection.create(schema)
+        this.result = await collection.rename(schema)
+    })
 
-        collection.rename(schema).then(result => {
+    it("expected a collection with new name", function () {
 
-            expect(result).to.be.an("object")
-            expect(result).to.have.property("db")
-            expect(result).to.have.property("collection")
+        expect(this.result).to.be.an("object")
+        expect(this.result).to.have.property("db")
+        expect(this.result).to.have.property("collection")
 
-            expect(result.db).to.be.a("string")
-            expect(result.collection).to.be.a("string")
+        expect(this.result.db).to.be.a("string")
+        expect(this.result.collection).to.be.a("string")
 
-            expect(result.db).to.equal(`mongodb-tools-${schema.database}`)
+        expect(this.result.db).to.equal(`mongodb-tools-${schema.database}`)
 
-            // - Change the collection name property, because now it is different
-            schema.collection = schema.new_collection_name
+    })
 
-            done()
+    after(async function () {
+        await collection.delete({
+            database: "buckets",
+            collection: schema.new_collection_name,
+            new_collection_name: schema.collection
         })
-
     })
 
 })
@@ -127,15 +140,15 @@ describe("query.database-collection 4", () => {
 
 describe("query.database-collection 3", () => {
 
-    it("should return collection delete", done => {
+    before(async function () {
+        await collection.create(schema)
+        this.result = await collection.delete(schema)
+    })
 
-        collection.delete(schema).then(result => {
+    it("should return collection delete", function () {
 
-            expect(result).to.be.a("boolean")
-            expect(result).to.be.equal(true)
-
-            done()
-        })
+        expect(this.result).to.be.a("boolean")
+        expect(this.result).to.be.equal(true)
 
     })
 
