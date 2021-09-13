@@ -124,7 +124,7 @@ Read information about a collection by the given `schema`.  <br />
 Example:
 
 ```js
-    let read_collection = async(schema) => await collection.read(schem)
+    let read_collection = async(schema) => await collection.read(schema)
 ```
 
 #### collection.create(schema)
@@ -205,13 +205,13 @@ Example:
 
 
 #### document.update(schema, query, document)
-Update one document in the database. You can filter by the given `query`, related to the data you want to update and `document` the new data.   
+Update one document in the database. You can filter by the given `query`, related to the data you want to update and `document` the new data. 
+In the `query` argument you have tu send an object or JSON with the property `_id` that you want to update.   
 For example, we are going to update the document created previously.
 
 ```js
     let query = {
-        "name": "bob",
-        "lastname": "sponge" 
+        "_id": "an_id" // _id should be a valid id of MongoDB
     }
 
     let document = {
@@ -226,13 +226,17 @@ For example, we are going to update the document created previously.
 ```
 
 #### document.delete(schema, query)
-Delete document in a collection, returns an object with information about if everything happend correctly. Should receive `query` argument to filter what document do you want to delete.  <br />
+Delete document in a collection, returns an object with information about if everything happend correctly. Should receive `query` argument to filter what document do you want to delete. In the `query` argument you have tu send an object or JSON with the property `_id` that you want to delete.  <br />
 Example:
 
 ```js
+    let query = {
+        "_id": "an_id" // _id should be a valid id of MongoDB
+    }
+
     let delete_document = async(schema, query) => await document.delete(schema, query)
     
-    delete_document({ "name": "Tom" })
+    delete_document(schema, query)
 ```
 
 #### document.list(schema)

@@ -51,26 +51,46 @@ const schema = {
     collection: `collection-test`,
 }
 
-describe("query.database-collection-document", () => {
 
-    it("expected a document created successfully", (done)=> {
+// - Tools use for tests
+const newDocument = {
+    "name": "Bob"
+}
 
-        document.create(schema, {"username": "bob", "email": "bob@gmail.com"}).then(result => {
-            // -
-            expect(result).to.have.property("n")
-            expect(result).to.have.property("ok")
-            expect(result).to.have.property("id")
+// Create document
+describe("query.database-collection-document-create", () => {
 
-            expect(result.n).to.be.equal(1)
+    before(async function () {
+        // Create a document
+        this.result = await document.create(schema, newDocument)
+        this.idDocument = this.result.id
+    })
 
-            expect(result.ok).to.be.equal(1)
 
-            expect(result.id).to.be.an("object")
+    it("expected a document created successfully", function () {
 
-            done()
-        })
+        // -
+        expect(this.result).to.have.property("n")
+        expect(this.result).to.have.property("ok")
+        expect(this.result).to.have.property("id")
+
+        expect(this.result.n).to.equal(1)
+
+        expect(this.result.ok).to.equal(1)
+
+        expect(this.result.id).to.an("object")
 
     })
+
+    after(async function () {
+        // Delete the document created
+        await document.delete(schema, { "_id": this.idDocument })
+    })
+
+})
+
+// Get document
+describe("query.database-collection-document-read", () => {
 
     it("expected documents read", (done) => {
 
@@ -94,43 +114,75 @@ describe("query.database-collection-document", () => {
 
     })
 
-    it("expected the first document", (done) => {
+})
 
-        document.first(schema).then(result => {
-            // -
-            expect(result).to.be.an("object")
-            expect(result).to.have.property("_id")
-            expect(result).to.have.property("datetime")
+// Get the first document
+describe("query.database-collection-document-first", () => {
 
-            expect(result._id).to.be.an("object")
-            expect(result.datetime).to.be.a("date")
+    before(async function () {
+        // Create document
+        this.result = await document.create(schema, newDocument)
+        this.idDocument = this.result.id
 
-            done()
-        })
+        // Get the first document found
+        this.result = await document.first(schema)
+    })
+
+    it("expected the first document", function () {
+
+        expect(this.result).to.be.an("object")
+        expect(this.result).to.have.property("_id")
+        expect(this.result).to.have.property("datetime")
+        expect(this.result._id).to.be.an("object")
+        expect(this.result.datetime).to.be.a("date")
 
     })
 
-    it("expected a document updated", (done) => {
+    after(async function () {
+        // Delete the document created
+        await document.delete(schema, { "_id": this.idDocument })
+    })
 
-        document.update(schema, {"username": "bob"}, {"username": "rocky"}).then(result => {
-            // -
-            expect(result).to.be.an("object")
-            expect(result).to.have.property("n")
-            expect(result).to.have.property("ok")
-            expect(result).to.have.property("updatedCount")
+})
 
-            expect(result.n).to.be.a("number")
-            expect(result.ok).to.be.a("number")
-            expect(result.updatedCount).to.be.a("number")
+// Update document
+describe("query.database-collection-document-update", () => {
 
-            expect(result.n).to.be.equal(1)
-            expect(result.ok).to.be.equal(1)
-            expect(result.updatedCount).to.be.equal(1)
+    before(async function () {
+        // Create document
+        this.result = await document.create(schema, newDocument)
+        this.idDocument = this.result.id
 
-            done()
-        })
+        // Update the document created
+        this.result = await document.update(schema, { "_id": this.idDocument }, { "name": "Tom" })
+    })
+
+    it("expected a document updated", function () {
+
+        expect(this.result).to.have.property("n")
+        expect(this.result).to.have.property("ok")
+        expect(this.result).to.have.property("updatedCount")
+
+        expect(this.result.n).to.be.a("number")
+        expect(this.result.ok).to.be.a("number")
+        expect(this.result.updatedCount).to.be.a("number")
+
+        expect(this.result.n).to.be.equal(1)
+        expect(this.result.ok).to.be.equal(1)
+        expect(this.result.updatedCount).to.be.equal(1)
+
 
     })
+
+    after(async function () {
+        // Delete the document created
+        await document.delete(schema, { "_id": this.idDocument })
+    })
+
+})
+
+// List all documents in a collection
+describe("query.database-collection-document-list", () => {
 
     it("expected all documents from a collection", (done) => {
 
@@ -143,21 +195,29 @@ describe("query.database-collection-document", () => {
 
     })
 
-    it("expected a document deleted", (done) => {
+})
 
-        document.delete(schema, {"username": "rocky"}).then(result => {
-            // -
-            expect(result).to.be.an("object")
-            expect(result).to.have.property("n")
-            expect(result).to.have.property("deletedCount")
+// Delete document
+describe("query.database-collection-document-delete", () => {
 
-            expect(result.n).to.be.a("number")
-            expect(result.ok).to.be.a("number")
-            expect(result.deletedCount).to.be.a("number")
-            expect(result.deletedCount).to.be.equal(1)
-            
-            done()
-        })
+    before(async function () {
+        // Create new document
+        this.result = await document.create(schema, newDocument)
+
+        // Delete the document created
+        this.result = await document.delete(schema, { "_id": this.result.id })
+    })
+
+    it("expected a document deleted", function () {
+
+        expect(this.result).to.be.an("object")
+        expect(this.result).to.have.property("n")
+        expect(this.result).to.have.property("deletedCount")
+
+        expect(this.result.n).to.be.a("number")
+        expect(this.result.ok).to.be.a("number")
+        expect(this.result.deletedCount).to.be.a("number")
+        expect(this.result.deletedCount).to.be.equal(1)
 
     })
 
