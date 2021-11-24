@@ -58,6 +58,7 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
     find = (schema, query = {}) => this._database_collection_document_find(schema, query)
     first = (schema, query = {}) => this._database_collection_document_first(schema, query)
     update = (schema, query, document) => this._database_collection_document_update_one(schema, query, document)
+    upsert = (schema, query, document) => this._database_collection_document_upsert(schema, query, document)
     delete = (schema, query = {}) => this._database_collection_document_delete_one(schema, query)
     create = (schema, document) => this._database_collection_document_create(schema, document)
     list = (schema) => this._database_collection_document_list(schema)
@@ -216,7 +217,7 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
             let collection = database.collection(schema.collection)
 
 
-            return collection.updateOne({ _id: idDocument}, { $set: document })
+            return collection.updateOne({ _id: idDocument}, { $set: document }, { upsert: true })
 
         }).then(document_updated_result => {
 
@@ -237,6 +238,40 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
         })
 
     }
+
+
+    // · Upsert document in a collection by query
+    _database_collection_document_upsert(schema, query, document){
+    
+        schema = this.schema_parse(schema)
+
+        return this.mongodb.connection.then(e => {
+            
+            let database = this.mongodb.client.db(schema.database)
+            let collection = database.collection(schema.collection)
+
+            return collection.updateOne(query, document, { upsert: true })
+
+        }).then(document_updated_result => {
+
+            return new Promise((resolve, reject) => {
+
+                return resolve({
+                    n: document_updated_result.result.n,
+                    ok: document_updated_result.result.ok,
+                    updatedCount: document_updated_result.result.nModified
+                })
+
+            })
+
+        }).catch(error => {
+
+            console.log(error);
+
+        })
+
+    }
+
 
     // · Return all documents in a collection
     _database_collection_document_list(schema){
