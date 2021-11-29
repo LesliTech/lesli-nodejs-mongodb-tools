@@ -11,7 +11,7 @@ module.exports = function(query) {
 
             // rows range found
             "documents": [
-                { "$match": {}, },
+                { "$match": { }},
                 { "$sort": { "datetime": -1 } },
                 { "$skip": query.skip ? parseInt(query.skip) : 0 },
                 { "$limit": query.limit ? parseInt(query.limit) : 1000 }
@@ -26,8 +26,14 @@ module.exports = function(query) {
 
 
     // Filter by specific field -> change to to column
+    // TODO: fix this
     if (query.column && query.column != "") {
-        pipeline[0]["$facet"].rows[0]["$match"][column] = query.text
+        pipeline[0]["$facet"].documents[0]["$match"][column] = query.text
+    }
+
+    // Filter by specific field -> change to to column
+    if (query.match) {
+        pipeline[0]["$facet"].documents[0]["$match"] = query.match
     }
 
 
