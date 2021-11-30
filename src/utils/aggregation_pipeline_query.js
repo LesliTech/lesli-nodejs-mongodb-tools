@@ -18,7 +18,7 @@ module.exports = function(query) {
             ],
 
             // total rows found
-            "records": [{ "$count": "total" }],
+            "records": [{ "$count": "total" }]
 
         }
 
@@ -34,6 +34,11 @@ module.exports = function(query) {
     // Filter by specific field -> change to to column
     if (query.match) {
         pipeline[0]["$facet"].documents[0]["$match"] = query.match
+    }
+
+    // Select specific fields
+    if (query.project) {
+        pipeline[0]["$facet"].documents.push({"$project": query.project })
     }
 
 
