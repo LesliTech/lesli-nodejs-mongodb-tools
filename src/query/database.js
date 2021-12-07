@@ -62,54 +62,56 @@ class LesliNodeJSMongoDBQueryDatabase extends LesliMongoDB {
     // · Return information about database including a list of collections
     _database_read(schema) {
 
+        // cache database raw name before build the schema
+        let database_name = schema.database.toString()
+
         schema = this.schema_parse(schema)
 
         return (async() => {
 
             let database = this.mongodb.client.db(schema.database)
 
-            let collections = (await database.listCollections().toArray()).map(collection => {
+            // get database statistics in bytes
+            let information = await database.stats()
+
+            let result = {
+                information: {
+                    database_name: information.db,
+                    database_collection_count: information.collections,
+                    database_collection_document_count: information.objects,
+                    database_uncompressed_data_size: {
+                        bytes: information.dataSize,
+                        string: converter(information.dataSize)
+                    },
+                    database_storage_size: {
+                        bytes: information.storageSize,
+                        human: converter(information.storageSize)
+                    },
+                    document_average_size: {
+                        bytes: information.avgObjSize,
+                        human: converter(information.avgObjSize)
+                    },
+                    indexes: information.indexes,
+                    indexes_size: {
+                        bytes: information.indexSize,
+                        human: converter(information.indexSize)
+                    },
+                    filesystem_available_space: {
+                        bytes: information.fsTotalSize - information.fsUsedSize,
+                        human: converter(information.fsTotalSize - information.fsUsedSize)
+                    }
+                }
+            }
+
+            result[database_name] = (await database.listCollections().toArray()).map(collection => {
                 return {
                     name: collection.name
                 }
             })
 
-            // get database statistics in bytes
-            let information = await database.stats()
-
-            information = {
-                database_name: information.db,
-                database_collection_count: information.collections,
-                database_collection_document_count: information.objects,
-                database_uncompressed_data_size: {
-                    bytes: information.dataSize,
-                    string: converter(information.dataSize)
-                },
-                database_storage_size: {
-                    bytes: information.storageSize,
-                    human: converter(information.storageSize)
-                },
-                document_average_size: {
-                    bytes: information.avgObjSize,
-                    human: converter(information.avgObjSize)
-                },
-                indexes: information.indexes,
-                indexes_size: {
-                    bytes: information.indexSize,
-                    human: converter(information.indexSize)
-                },
-                filesystem_available_space: {
-                    bytes: information.fsTotalSize - information.fsUsedSize,
-                    human: converter(information.fsTotalSize - information.fsUsedSize)
-                }
-            }
-
             return new Promise((resolve, reject) => {
 
-                return resolve({
-                    information: information,
-                    collections: collections
-                })
+                return resolve(result)
 
             })
 
