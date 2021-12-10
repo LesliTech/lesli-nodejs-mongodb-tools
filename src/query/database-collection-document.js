@@ -46,12 +46,10 @@ const { aggregation_pipeline_query } = require("../utils")
 class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
 
 
-
     // · 
     constructor(config) {
         super(config)
     }
-
 
 
     // · 
@@ -62,7 +60,6 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
     delete = (schema, query = {}) => this._database_collection_document_delete_one(schema, query)
     create = (schema, document) => this._database_collection_document_create(schema, document)
     list = (schema) => this._database_collection_document_list(schema)
-
 
 
     // · Find documents in the database
