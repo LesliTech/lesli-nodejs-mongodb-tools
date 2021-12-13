@@ -43,7 +43,7 @@ module.exports = function(query) {
             // rows range found
             "documents": [
                 { "$match": { }},
-                { "$sort": { "datetime": -1 } },
+                { "$sort": query.sort || { "datetime": -1 } },
                 { "$skip": query.skip ? parseInt(query.skip) : 0 },
                 { "$limit": query.limit ? parseInt(query.limit) : 1000 }
             ],
@@ -57,27 +57,22 @@ module.exports = function(query) {
 
 
     // Filter by specific field -> change to to column
-    // TODO: fix this
-    if (query.column && query.column != "") {
-        pipeline[0]["$facet"].documents[0]["$match"][column] = query.text
-    }
-
-    // override the default sort field if provided
-    if (query.sort) {
-        pipeline[0]["$facet"].documents[1]["$sort"] = query.sort
-    }
-
-    // Filter by specific field -> change to to column
+    // query['match'] = { key: value }
     if (query.match) {
         pipeline[0]["$facet"].documents[0]["$match"] = query.match
     }
+
+
+    // Get N last records
+    if (query.last && query.last != "" && query.last > 0) {
+        pipeline[0]["$facet"].documents[3]["$limit"] = parseInt(query.last)
+    }
+
 
     // Select specific fields
     if (query.project) {
         pipeline[0]["$facet"].documents.push({"$project": query.project })
     }
-
-
 
 
     // Return records between range of time
@@ -88,13 +83,7 @@ module.exports = function(query) {
         }
     }
 
-
-    // Get N last records
-    if (query.last && query.last != "" && query.last > 0) {
-        pipeline[0]["$facet"].documents[1]["$sort"]["datetime"] = -1
-        pipeline[0]["$facet"].documents[3]["$limit"] = parseInt(query.last)
-    }
-
+    //
     return pipeline
 
 }
