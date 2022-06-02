@@ -70,6 +70,11 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
 
         return this.mongodb.connection.then(e => {
 
+            // Support to filter by ObjectId
+            if(query.match && query.match._id){
+                query.match._id = ObjectId(query.match._id)
+            }
+
             let database = this.mongodb.client.db(schema.database)
             let collection = database.collection(schema.collection)
             let aggregation = collection.aggregate(aggregation_query)
