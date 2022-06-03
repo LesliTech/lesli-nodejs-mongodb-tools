@@ -69,10 +69,11 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
         var aggregation_query = aggregation_pipeline_query(query)
 
         return this.mongodb.connection.then(e => {
-
+            console.log(query)
             // Support to filter by ObjectId
-            if(query.match && query.match._id){
-                query.match._id = ObjectId(query.match._id)
+            if(query?.match?.id){
+                query.match["_id"] = ObjectId(query.match.id)
+                delete query.match.id
             }
 
             let database = this.mongodb.client.db(schema.database)
@@ -84,7 +85,7 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
         }).then(documents => {
 
             return new Promise((resolve, reject) => {
-
+                
                 var total = 0
                 
                 if (documents[0].documents.length > 0) {
