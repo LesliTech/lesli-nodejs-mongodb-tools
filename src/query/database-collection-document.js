@@ -73,7 +73,6 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
             // Support to filter by ObjectId
             if(query?.match?.id){
                 query.match["_id"] = ObjectId(query.match.id)
-                delete query.match.id
             }
 
             let database = this.mongodb.client.db(schema.database)
