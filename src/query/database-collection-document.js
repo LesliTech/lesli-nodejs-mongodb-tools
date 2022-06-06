@@ -71,8 +71,6 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
             delete query.match["id"]
         }
 
-        console.log(query)
-
         var schema = this.schema_parse(schema)
         var aggregation_query = aggregation_pipeline_query(query)
 
@@ -85,7 +83,6 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
             return aggregation.toArray()
 
         }).then(documents => {
-
             return new Promise((resolve, reject) => {
                 
                 var total = 0
