@@ -65,15 +65,18 @@ class LesliNodeJSMongoDBQueryDatabaseCollectionDocument extends LesliMongoDB {
     // · Find documents in the database
     _database_collection_document_find(schema, query={}) {
 
+        // Support to filter by ObjectId
+        if(query?.match?.id){
+            query.match["_id"] = ObjectId(query.match.id)
+            delete query.match["id"]
+        }
+
+        console.log(query)
+
         var schema = this.schema_parse(schema)
         var aggregation_query = aggregation_pipeline_query(query)
 
         return this.mongodb.connection.then(e => {
-
-            // Support to filter by ObjectId
-            if(query?.match?.id){
-                query.match["_id"] = ObjectId(query.match.id)
-            }
 
             let database = this.mongodb.client.db(schema.database)
             let collection = database.collection(schema.collection)
