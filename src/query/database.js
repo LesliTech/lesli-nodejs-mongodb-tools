@@ -85,20 +85,20 @@ class LesliNodeJSMongoDBQueryDatabase extends LesliMongoDB {
                     },
                     database_storage_size: {
                         bytes: information.storageSize,
-                        human: converter(information.storageSize)
+                        string: converter(information.storageSize)
                     },
                     document_average_size: {
                         bytes: information.avgObjSize,
-                        human: converter(information.avgObjSize)
+                        string: converter(information.avgObjSize)
                     },
                     indexes: information.indexes,
                     indexes_size: {
                         bytes: information.indexSize,
-                        human: converter(information.indexSize)
+                        string: converter(information.indexSize)
                     },
                     filesystem_available_space: {
                         bytes: information.fsTotalSize - information.fsUsedSize,
-                        human: converter(information.fsTotalSize - information.fsUsedSize)
+                        string: converter(information.fsTotalSize - information.fsUsedSize)
                     }
                 }
             }
